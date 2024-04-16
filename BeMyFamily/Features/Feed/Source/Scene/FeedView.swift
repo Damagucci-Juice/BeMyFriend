@@ -15,7 +15,7 @@ struct FeedView: View {
     var body: some View {
         ScrollView {
             ForEach(animals) { animal in
-                AsyncImage(url: URL(string: animal.animalPhotoURL))
+                AsyncImage(url: URL(string: animal.thumbnailURL))
             }
         }
         .task {

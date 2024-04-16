@@ -36,12 +36,11 @@ struct Actions {
                     type: AnimalResponse.self,
                     decoder: JSONDecoder()
                 )
-                .map(\.response.body)
                 .map {
                     PaginatedResponse(numbersOfRow: $0.numOfRows,
                                       pageNumber: $0.pageNo,
                                       totalCounts: $0.totalCount,
-                                      results: $0.items.item)
+                                      results: $0.animal)
                 }
                 .eraseToAnyPublisher()
         }
@@ -53,11 +52,11 @@ struct Actions {
                     throw HTTPError.notFoundResponse
                 }
                 do {
-                    let decoded = try JSONDecoder().decode(AnimalResponse.self, from: fetched).response.body
-                    return PaginatedResponse(numbersOfRow: decoded.numOfRows,
-                                             pageNumber: decoded.pageNo,
-                                             totalCounts: decoded.totalCount,
-                                             results: decoded.items.item)
+                    let animalResponse = try JSONDecoder().decode(AnimalResponse.self, from: fetched)
+                    return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
+                                             pageNumber: animalResponse.pageNo,
+                                             totalCounts: animalResponse.totalCount,
+                                             results: animalResponse.animal)
                 } catch let error {
                     print("Failed to decode JSON: \(error.localizedDescription)")
                     print("JSON of Data")
