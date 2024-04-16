@@ -29,7 +29,7 @@ struct Actions {
         let filter: AnimalFilter
         let page: Int
         
-        func excute(_ service: SearchService) -> AnyPublisher<PaginatedResponse<AnimalDTO>, Error> {
+        func excute(_ service: SearchService) -> AnyPublisher<PaginatedResponse<Item>, Error> {
             let animalPublisher = service.search(.animal(filteredItem: filter))
             return animalPublisher
                 .decode(
@@ -47,7 +47,7 @@ struct Actions {
         }
         
         // TODO: - 깔끔한 에러처리 도입이 필요함
-        func excute(_ service: SearchService) async throws -> PaginatedResponse<AnimalDTO> {
+        func excute(_ service: SearchService) async throws -> PaginatedResponse<Item> {
             do {
                 guard let fetched = try await service.search(.animal(filteredItem: filter)) else {
                     throw HTTPError.notFoundResponse

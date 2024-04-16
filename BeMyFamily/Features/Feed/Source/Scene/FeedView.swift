@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject var service: FriendSearchService
-    @State private var animals = [AnimalDTO]()
+    @State private var animals = [Item]()
     @State private var filter = AnimalFilter.example
     @State private var page = 1
     var body: some View {
