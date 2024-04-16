@@ -24,7 +24,7 @@ struct AnimalFilter: Codable {          // MARK: 데이터 항목 설명 친구
     static let example: Self = .init(beginDate: .now,
                                      endDate: .now,
                                      upkind: "417000",
-                                     kind: "000069",
+                                     kind: nil,
                                      sido: nil,
                                      sigungu: nil,
                                      shelterNumber: nil,

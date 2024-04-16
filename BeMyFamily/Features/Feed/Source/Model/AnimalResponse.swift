@@ -73,11 +73,11 @@ struct Body: Codable {
 
 // MARK: - Items
 struct Items: Codable {
-    let item: [Item]
+    let item: [Animal]
 }
 
-// MARK: - Item
-struct Item: Codable {
+// MARK: - Animal
+struct Animal: Codable, Identifiable {
     let id: String
     let thumbnailURL: String
     let happenDt, happenPlace, kindCD, colorCD: String

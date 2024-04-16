@@ -9,13 +9,13 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject var service: FriendSearchService
-    @State private var animals = [Item]()
+    @State private var animals = [Animal]()
     @State private var filter = AnimalFilter.example
     @State private var page = 1
     var body: some View {
         ScrollView {
             ForEach(animals) { animal in
-                AsyncImage(url: URL(string: animal.popfile))
+                AsyncImage(url: URL(string: animal.animalPhotoURL))
             }
         }
         .task {
