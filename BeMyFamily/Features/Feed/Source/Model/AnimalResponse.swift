@@ -55,28 +55,59 @@ import Foundation
  
  */
 
-struct AnimalResponse: Codable {
-    let response: Response
+////i love you, my doggie -niko
+
+struct AnimalResponse: Decodable {
+    let requestNumber: Int
+    let resultCode: String
+    let resultMessage: String
+    let numOfRows: Int
+    let pageNo: Int
+    let totalCount: Int
+    let animal: [Animal]
+    
+    enum CodingKeys: String, CodingKey {
+        case response
+    }
+    
+    enum ResponseCodingKeys: String, CodingKey {
+        case header, body
+    }
+    
+    enum HeaderCodingKeys: String, CodingKey {
+        case requestNumber = "reqNo"
+        case resultMessage = "resultMsg"
+        case resultCode
+    }
+    
+    enum BodyCodingKeys: String, CodingKey {
+        case items
+        case numOfRows, pageNo, totalCount
+    }
+    
+    enum ItemsCodingKeys: String, CodingKey {
+        case animals = "item"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let responseContainer = try container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
+        
+        let headerContainer = try responseContainer.nestedContainer(keyedBy: HeaderCodingKeys.self, forKey: .header)
+        requestNumber = try headerContainer.decode(Int.self, forKey: .requestNumber)
+        resultCode = try headerContainer.decode(String.self, forKey: .resultCode)
+        resultMessage = try headerContainer.decode(String.self, forKey: .resultMessage)
+        
+        let bodyContainer = try responseContainer.nestedContainer(keyedBy: BodyCodingKeys.self, forKey: .body)
+        numOfRows = try bodyContainer.decode(Int.self, forKey: .numOfRows)
+        pageNo = try bodyContainer.decode(Int.self, forKey: .pageNo)
+        totalCount = try bodyContainer.decode(Int.self, forKey: .totalCount)
+        
+        let itemsContainer = try bodyContainer.nestedContainer(keyedBy: ItemsCodingKeys.self, forKey: .items)
+        animal = try itemsContainer.decode([Animal].self, forKey: .animals)
+    }
 }
 
-// MARK: - Response
-struct Response: Codable {
-    let header: Header
-    let body: Body
-}
-
-// MARK: - Body
-struct Body: Codable {
-    let items: Items
-    let numOfRows, pageNo, totalCount: Int
-}
-
-// MARK: - Items
-struct Items: Codable {
-    let item: [Animal]
-}
-
-// MARK: - Animal
 struct Animal: Codable, Identifiable {
     let id: String
     let thumbnailURL: String
@@ -85,8 +116,8 @@ struct Animal: Codable, Identifiable {
     let noticeEdt: String
     let animalPhotoURL: String
     let processState: String
-    let sexCD: SexCD
-    let neuterYn: NeuterYn
+    let sexCD: String
+    let neuterYn: String
     let specialMark, careNm, careTel, careAddr: String
     let orgNm, chargeNm, officetel: String
 
@@ -101,24 +132,5 @@ struct Animal: Codable, Identifiable {
         case neuterYn, specialMark, careNm, careTel, careAddr, orgNm, chargeNm, officetel
         case id = "desertionNo"
     }
+    // 중성화 여부, 성별 등의 타입을 쓰고 싶으면 NestedType 사용을 고려해야함
 }
-
-enum NeuterYn: String, Codable {
-    case no = "N"
-    case yes = "Y"
-    case unknown = "U"
-}
-
-enum SexCD: String, Codable {
-    case female = "F"
-    case male = "M"
-    case unknown = "Q"
-}
-
-// MARK: - Header
-struct Header: Codable {
-    let reqNo: Int
-    let resultCode, resultMsg: String
-}
-
-//i love you, my doggie -niko
