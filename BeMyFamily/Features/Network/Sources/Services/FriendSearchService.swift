@@ -10,6 +10,7 @@ import Combine
 
 public enum HTTPError: Error {
     case notFoundResponse
+    case notFoundURL
     case invalidResponse(_ errorCode: Int)
 }
 
@@ -45,8 +46,9 @@ protocol SearchService: AnyObject {
 }
 
 final class FriendSearchService: ObservableObject, SearchService {
-    let session: URLSession
-    
+    private let session: URLSession
+    private let friendCache: NSCache<NSString, CacheEntryObject> = NSCache()
+
     public init(session: URLSession = .shared) {
         self.session = session
     }
@@ -74,27 +76,33 @@ final class FriendSearchService: ObservableObject, SearchService {
             .eraseToAnyPublisher()
     }
     
-    func search(_ endpoint: FriendEndpoint) async throws -> Data? {
+    public func search(_ endpoint: FriendEndpoint) async throws -> Data? {
         return try await performRequest(urlRequest: endpoint.makeURLRequest())
     }
     
     public func performRequest(urlRequest: URLRequest) async throws -> Data? {
-        let (data, response) = try await session.data(for: urlRequest, delegate: nil)
-        
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.badRequest)
-        }
-        
-        let statusCode = httpResponse.statusCode
-        
-        guard (HttpStatusCode.Success.range).contains(statusCode) else {
-            if statusCode == HttpStatusCode.ClientError.notFoundError {
-                throw HTTPError.notFoundResponse
-            } else {
-                throw HTTPError.invalidResponse(statusCode)
+        guard let url = urlRequest.url else { throw HTTPError.notFoundURL }
+        if let cached = friendCache[url] {
+            switch cached {
+            case .ready(let result):
+                return result
+            case .inprogress(let task):
+                return try await task.value
             }
         }
-
-        return data
+        let task = Task<Data, Error> {
+            let (data, _) = try await session.data(for: urlRequest, delegate: nil)
+            return data
+        }
+        
+        friendCache[url] = .inprogress(task)
+        do {
+            let fetchedData = try await task.value
+            friendCache[url] = .ready(fetchedData)
+            return fetchedData
+        } catch {
+            friendCache[url] = nil
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+        }
     }
 }

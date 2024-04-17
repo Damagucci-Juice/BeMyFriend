@@ -45,9 +45,6 @@ extension FriendEndpoint {
         var dict: [String: String] = [
             "_type": "json",
             "serviceKey": "dPXa2aDAK4Zlqst8P1kjsxl3oIsq49aExnzH7RhLCzUrX8rOrIkNyYRPf%2FshHLbq%2FLtgAnK7jtfeXwPSPZpr5g%3D%3D"
-            // 오류키     : "dPXa2aDAK4Zlqst8P1kjsxl3oIsq49aExnzH7RhLCzUrX8rOrIkNyYRPf%252FshHLbq%252FLtgAnK7jtfeXwPSPZpr5g%253D%253D" // % -> %25
-            // 2dhfb    : "dPXa2aDAK4Zlqst8P1kjsxl3oIsq49aExnzH7RhLCzUrX8rOrIkNyYRPf%252FshHLbq%252FLtgAnK7jtfeXwPSPZpr5g%253D%253D"
-            // 3 error  : "dPXa2aDAK4Zlqst8P1kjsxl3oIsq49aExnzH7RhLCzUrX8rOrIkNyYRPf%2FshHLbq%2FLtgAnK7jtfeXwPSPZpr5g%3D%3D"
         ]
         
         switch self {
