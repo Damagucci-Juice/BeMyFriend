@@ -21,22 +21,6 @@ struct Actions {
         let filter: AnimalFilter
         let page: Int
 
-        func excute(_ service: SearchService) -> AnyPublisher<PaginatedResponse<Animal>, Error> {
-            let animalPublisher = service.search(.animal(filteredItem: filter))
-            return animalPublisher
-                .decode(
-                    type: AnimalResponse.self,
-                    decoder: JSONDecoder()
-                )
-                .map {
-                    PaginatedResponse(numbersOfRow: $0.numOfRows,
-                                      pageNumber: $0.pageNo,
-                                      totalCounts: $0.totalCount,
-                                      results: $0.animal)
-                }
-                .eraseToAnyPublisher()
-        }
-
         func excute(_ service: SearchService) async throws -> PaginatedResponse<Animal> {
             if let fetched = try await service.search(.animal(filteredItem: filter)) {
                 do {
