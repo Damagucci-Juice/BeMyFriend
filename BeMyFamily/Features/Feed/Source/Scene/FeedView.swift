@@ -4,7 +4,7 @@
 //
 //  Created by Gucci on 4/9/24.
 //
-import Combine
+import NukeUI
 import SwiftUI
 
 struct FeedView: View {
@@ -15,7 +15,7 @@ struct FeedView: View {
     var body: some View {
         ScrollView {
             ForEach(animals) { animal in
-                AsyncImage(url: URL(string: animal.thumbnailURL))
+                LazyImage(url: URL(string: animal.thumbnailURL))
             }
         }
         .task {
