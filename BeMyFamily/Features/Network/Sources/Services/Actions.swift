@@ -58,9 +58,7 @@ struct Actions {
                                              totalCounts: animalResponse.totalCount,
                                              results: animalResponse.animal)
                 } catch let error {
-                    print("Failed to decode JSON: \(error.localizedDescription)")
-                    print("JSON of Data")
-                    print(fetched.prettyPrintedJSONString ?? "")
+                    dump(fetched.prettyPrintedJSONString ?? "")
                     throw error
                 }
                 
