@@ -37,12 +37,8 @@ struct Actions {
                 .eraseToAnyPublisher()
         }
 
-        // TODO: - 깔끔한 에러처리 도입이 필요함
         func excute(_ service: SearchService) async throws -> PaginatedResponse<Animal> {
-            do {
-                guard let fetched = try await service.search(.animal(filteredItem: filter)) else {
-                    throw HTTPError.notFoundResponse
-                }
+            if let fetched = try await service.search(.animal(filteredItem: filter)) {
                 do {
                     let animalResponse = try JSONDecoder().decode(AnimalResponse.self, from: fetched)
                     return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
@@ -53,9 +49,8 @@ struct Actions {
                     dump(fetched.prettyPrintedJSONString ?? "")
                     throw error
                 }
-            } catch let error {
-                throw error
             }
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
     }
 }

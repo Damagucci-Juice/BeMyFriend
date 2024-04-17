@@ -10,7 +10,6 @@ import Combine
 
 public enum HTTPError: Error {
     case notFoundResponse
-    case notFoundURL
     case invalidResponse(_ errorCode: Int)
 }
 
@@ -81,7 +80,9 @@ final class FriendSearchService: ObservableObject, SearchService {
     }
 
     public func performRequest(urlRequest: URLRequest) async throws -> Data? {
-        guard let url = urlRequest.url else { throw HTTPError.notFoundURL }
+        guard let url = urlRequest.url else {
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+        }
         if let cached = friendCache[url] {
             switch cached {
             case .ready(let result):
