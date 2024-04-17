@@ -20,8 +20,12 @@ struct FeedView: View {
         }
         .task {
             do {
-                let paginatedAnimal = try await Actions.FetchAnimal(filter: filter, page: page).excute(service)
+                let paginatedAnimal = try await Actions.FetchAnimal(service: service,
+                                                                    filter: filter,
+                                                                    page: page).excute()
+                let sido = try await Actions.FetchSido(service: service).excute()
                 animals.append(contentsOf: paginatedAnimal.results)
+                dump(sido.results)
             } catch let error {
                 print(error.localizedDescription)
             }

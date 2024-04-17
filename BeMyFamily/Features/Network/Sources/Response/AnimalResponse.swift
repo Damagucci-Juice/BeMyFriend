@@ -57,14 +57,14 @@ import Foundation
 
 /// i love you, my doggie -niko
 
-struct AnimalResponse: Decodable {
+struct APIResponse<T: Codable>: Decodable {
     let requestNumber: Int
     let resultCode: String
     let resultMessage: String
     let numOfRows: Int
     let pageNo: Int
     let totalCount: Int
-    let animal: [Animal]
+    let items: [T]
 
     enum CodingKeys: String, CodingKey {
         case response
@@ -86,7 +86,7 @@ struct AnimalResponse: Decodable {
     }
 
     enum ItemsCodingKeys: String, CodingKey {
-        case animals = "item"
+        case items = "item"
     }
 
     init(from decoder: Decoder) throws {
@@ -104,33 +104,6 @@ struct AnimalResponse: Decodable {
         totalCount = try bodyContainer.decode(Int.self, forKey: .totalCount)
 
         let itemsContainer = try bodyContainer.nestedContainer(keyedBy: ItemsCodingKeys.self, forKey: .items)
-        animal = try itemsContainer.decode([Animal].self, forKey: .animals)
+        items = try itemsContainer.decode([T].self, forKey: .items)
     }
-}
-
-struct Animal: Codable, Identifiable {
-    let id: String
-    let thumbnailURL: String
-    let happenDt, happenPlace, kindCD, colorCD: String
-    let age, weight, noticeNo, noticeSdt: String
-    let noticeEdt: String
-    let animalPhotoURL: String
-    let processState: String
-    let sexCD: String
-    let neuterYn: String
-    let specialMark, careNm, careTel, careAddr: String
-    let orgNm, chargeNm, officetel: String
-
-    enum CodingKeys: String, CodingKey {
-        case thumbnailURL = "filename"
-        case animalPhotoURL = "popfile"
-        case happenDt, happenPlace
-        case kindCD = "kindCd"
-        case colorCD = "colorCd"
-        case age, weight, noticeNo, noticeSdt, noticeEdt, processState
-        case sexCD = "sexCd"
-        case neuterYn, specialMark, careNm, careTel, careAddr, orgNm, chargeNm, officetel
-        case id = "desertionNo"
-    }
-    // 중성화 여부, 성별 등의 타입을 쓰고 싶으면 NestedType 사용을 고려해야함
 }

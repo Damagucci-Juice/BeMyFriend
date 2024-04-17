@@ -16,6 +16,11 @@ struct Constants {
         static let shelterPath = "shelter"
         static let kindPath = "kind"
         static let animalPath = "abandonmentPublic"
+
+    }
+
+    struct NetworkParameters {
+        static let totalSidoCount = "17"
     }
 
     struct Image {

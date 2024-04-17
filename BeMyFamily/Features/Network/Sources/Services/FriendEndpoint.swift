@@ -8,7 +8,7 @@
 import Foundation
 
 enum FriendEndpoint {
-    case sido(page: Int)   // page num을 1~5번까지 호출해야함
+    case sido
     case sigungu(sido: Int)
     case shelter(sido: Int, sigungu: Int)
     case kind(upkind: Int)
@@ -50,9 +50,9 @@ extension FriendEndpoint {
         ]
 
         switch self {
-        case .sido(let page):
-            dict.updateValue("4", forKey: "numOfRows")
-            dict.updateValue("\(page)", forKey: "pageNo")
+        case .sido:
+            dict.updateValue(Constants.NetworkParameters.totalSidoCount, forKey: "numOfRows")
+            dict.updateValue("1", forKey: "pageNo")
         case .sigungu(let sido):
             dict.updateValue("\(sido)", forKey: "upr_cd")
         case .shelter(let sido, let sigungu):
