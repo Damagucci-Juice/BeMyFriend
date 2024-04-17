@@ -16,5 +16,3 @@ final class CacheEntryObject {
     let entry: CacheEntry
     init(entry: CacheEntry) { self.entry = entry }
 }
-
-

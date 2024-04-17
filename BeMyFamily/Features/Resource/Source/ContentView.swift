@@ -15,7 +15,7 @@ struct ContentView: View {
                     Image(systemName: "1.square.fill")
                     Text("Feed")
                 }
-            
+
             FavoriteView()
                 .tabItem {
                     Image(systemName: "2.square.fill")

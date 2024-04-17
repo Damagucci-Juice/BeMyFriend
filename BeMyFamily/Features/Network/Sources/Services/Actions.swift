@@ -9,26 +9,18 @@ import Foundation
 import Combine
 
 struct Actions {
-    struct FetchSido: AsyncAction {
-        
-    }
-    
-    struct FetchSigungu: AsyncAction {
-        
-    }
-    
-    struct FetchShelter: AsyncAction {
-        
-    }
-    
-    struct FetchKind: AsyncAction {
-        
-    }
-    
+    struct FetchSido: AsyncAction { }
+
+    struct FetchSigungu: AsyncAction { }
+
+    struct FetchShelter: AsyncAction { }
+
+    struct FetchKind: AsyncAction { }
+
     struct FetchAnimal: AsyncAction {
         let filter: AnimalFilter
         let page: Int
-        
+
         func excute(_ service: SearchService) -> AnyPublisher<PaginatedResponse<Animal>, Error> {
             let animalPublisher = service.search(.animal(filteredItem: filter))
             return animalPublisher
@@ -44,7 +36,7 @@ struct Actions {
                 }
                 .eraseToAnyPublisher()
         }
-        
+
         // TODO: - 깔끔한 에러처리 도입이 필요함
         func excute(_ service: SearchService) async throws -> PaginatedResponse<Animal> {
             do {
@@ -61,14 +53,12 @@ struct Actions {
                     dump(fetched.prettyPrintedJSONString ?? "")
                     throw error
                 }
-                
             } catch let error {
                 throw error
             }
         }
     }
 }
-
 
 protocol Action { }
 protocol AsyncAction: Action { }

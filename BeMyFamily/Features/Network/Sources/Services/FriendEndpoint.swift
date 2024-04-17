@@ -21,32 +21,34 @@ extension FriendEndpoint {
         return URL(string: Constants.Network.baseUrlPath)!
         // swiftlint:enable force_unwrapping
     }
-    
+
     var path: String {
         switch self {
-        case .sido(_):
+        case .sido:
             return Constants.Network.sidoPath
-        case .sigungu(_):
+        case .sigungu:
             return Constants.Network.sigunguPath
-        case .shelter(_, _):
+        case .shelter:
             return Constants.Network.shelterPath
-        case .kind(_):
+        case .kind:
             return Constants.Network.kindPath
         case .animal:
             return Constants.Network.animalPath
         }
     }
-    
+
     var method: String {
         return "GET"
     }
-    
+
     var parameter: [String: String] {
         var dict: [String: String] = [
             "_type": "json",
+            // swiftlint:disable line_length
             "serviceKey": "dPXa2aDAK4Zlqst8P1kjsxl3oIsq49aExnzH7RhLCzUrX8rOrIkNyYRPf%2FshHLbq%2FLtgAnK7jtfeXwPSPZpr5g%3D%3D"
+            // swiftlint:enable line_length
         ]
-        
+
         switch self {
         case .sido(let page):
             dict.updateValue("4", forKey: "numOfRows")
@@ -65,7 +67,7 @@ extension FriendEndpoint {
         }
         return dict
     }
-    
+
     var headers: [String: String]? {
         return nil
     }

@@ -55,7 +55,7 @@ import Foundation
  
  */
 
-////i love you, my doggie -niko
+/// i love you, my doggie -niko
 
 struct AnimalResponse: Decodable {
     let requestNumber: Int
@@ -65,44 +65,44 @@ struct AnimalResponse: Decodable {
     let pageNo: Int
     let totalCount: Int
     let animal: [Animal]
-    
+
     enum CodingKeys: String, CodingKey {
         case response
     }
-    
+
     enum ResponseCodingKeys: String, CodingKey {
         case header, body
     }
-    
+
     enum HeaderCodingKeys: String, CodingKey {
         case requestNumber = "reqNo"
         case resultMessage = "resultMsg"
         case resultCode
     }
-    
+
     enum BodyCodingKeys: String, CodingKey {
         case items
         case numOfRows, pageNo, totalCount
     }
-    
+
     enum ItemsCodingKeys: String, CodingKey {
         case animals = "item"
     }
-    
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let responseContainer = try container.nestedContainer(keyedBy: ResponseCodingKeys.self, forKey: .response)
-        
+
         let headerContainer = try responseContainer.nestedContainer(keyedBy: HeaderCodingKeys.self, forKey: .header)
         requestNumber = try headerContainer.decode(Int.self, forKey: .requestNumber)
         resultCode = try headerContainer.decode(String.self, forKey: .resultCode)
         resultMessage = try headerContainer.decode(String.self, forKey: .resultMessage)
-        
+
         let bodyContainer = try responseContainer.nestedContainer(keyedBy: BodyCodingKeys.self, forKey: .body)
         numOfRows = try bodyContainer.decode(Int.self, forKey: .numOfRows)
         pageNo = try bodyContainer.decode(Int.self, forKey: .pageNo)
         totalCount = try bodyContainer.decode(Int.self, forKey: .totalCount)
-        
+
         let itemsContainer = try bodyContainer.nestedContainer(keyedBy: ItemsCodingKeys.self, forKey: .items)
         animal = try itemsContainer.decode([Animal].self, forKey: .animals)
     }
@@ -127,7 +127,7 @@ struct Animal: Codable, Identifiable {
         case happenDt, happenPlace
         case kindCD = "kindCd"
         case colorCD = "colorCd"
-        case age, weight, noticeNo, noticeSdt, noticeEdt,processState
+        case age, weight, noticeNo, noticeSdt, noticeEdt, processState
         case sexCD = "sexCd"
         case neuterYn, specialMark, careNm, careTel, careAddr, orgNm, chargeNm, officetel
         case id = "desertionNo"

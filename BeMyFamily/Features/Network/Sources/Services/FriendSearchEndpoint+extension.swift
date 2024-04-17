@@ -18,7 +18,7 @@ extension FriendEndpoint {
         }
         return addedParameterURL
     }
-    
+
     func makeURLComponent(_ url: URL) -> URLComponents {
         guard var component = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
             fatalError("Failed to create URLComponents for endpoint: \(baseURL)")
@@ -29,7 +29,7 @@ extension FriendEndpoint {
         component.percentEncodedQuery = component.percentEncodedQuery?.replacingOccurrences(of: "%25", with: "%")
         return component
     }
-    
+
     func makeURLRequest() -> URLRequest {
         let url = makeURL()
         var request = URLRequest(url: url)

@@ -20,7 +20,7 @@ struct AnimalFilter: Codable {          // MARK: 데이터 항목 설명 친구
     let neutralizationState: String?    // 중성화여부::0::전체-nil,예:"Y",아니오:"N",미상:"U"
 //    let pageNumber: String?             // 페이지번호::0::"4"
 //    let numOfRows: String?              // 페이지당 보여줄 개수::0::"10"(기본10개)
-    
+
     static let example: Self = .init(beginDate: .now,
                                      endDate: .now,
                                      upkind: "417000",
@@ -30,7 +30,7 @@ struct AnimalFilter: Codable {          // MARK: 데이터 항목 설명 친구
                                      shelterNumber: nil,
                                      processState: nil,
                                      neutralizationState: nil)
-    
+
     func toParams() -> [String: String] {
         var dict = [String: String]()
         if let beginDate {
@@ -64,7 +64,7 @@ struct AnimalFilter: Codable {          // MARK: 데이터 항목 설명 친구
     }
 }
 
-fileprivate let dateFommater: DateFormatter = {
+private let dateFommater: DateFormatter = {
     let formmater = DateFormatter()
     formmater.locale = Locale(identifier: "ko_KR")
     formmater.dateFormat = "yyyyMMdd"

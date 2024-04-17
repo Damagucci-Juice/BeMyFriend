@@ -31,7 +31,7 @@ struct FeedView: View {
 
 #Preview {
     @StateObject var service = FriendSearchService()
-    
+
     return FeedView()
         .environmentObject(service)
 }
