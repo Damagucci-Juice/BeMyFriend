@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - API Response for "Sido and Animal"
 struct PaginatedResponse<T: Codable>: Codable {
     let numbersOfRow: Int?
     let pageNumber: Int?

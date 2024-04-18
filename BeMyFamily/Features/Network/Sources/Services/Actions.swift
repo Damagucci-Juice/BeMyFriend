@@ -15,7 +15,7 @@ struct Actions {
         func excute() async throws -> PaginatedResponse<Sido> {
             if let fetched = try await service.search(.sido) {
                 do {
-                    let sidoResponse = try JSONDecoder().decode(APIResponse<Sido>.self, from: fetched)
+                    let sidoResponse = try JSONDecoder().decode(PaginatedAPIResponse<Sido>.self, from: fetched)
                     return PaginatedResponse(numbersOfRow: sidoResponse.numOfRows,
                                              pageNumber: sidoResponse.pageNo,
                                              totalCounts: sidoResponse.totalCount,
@@ -29,11 +29,56 @@ struct Actions {
         }
     }
 
-    struct FetchSigungu: AsyncAction { }
+    struct FetchSigungu: AsyncAction {
+        let service: FriendSearchService
 
-    struct FetchShelter: AsyncAction { }
+        func excute(_ sidoCode: Int) async throws -> Response<Sigungu> {
+            if let fetched = try await service.search(.sigungu(sido: sidoCode)) {
+                do {
+                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Sigungu>.self, from: fetched)
+                    return Response(results: sigunguResponse.items)
+                } catch let error {
+                    dump(fetched.prettyPrintedJSONString ?? "")
+                    throw error
+                }
+            }
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+        }
+    }
 
-    struct FetchKind: AsyncAction { }
+    struct FetchShelter: AsyncAction {
+        let service: FriendSearchService
+
+        func excute(_ sidoCode: Int, _ sigunguCode: Int) async throws -> Response<Shelter> {
+            if let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode)) {
+                do {
+                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
+                    return Response(results: sigunguResponse.items)
+                } catch let error {
+                    dump(fetched.prettyPrintedJSONString ?? "")
+                    throw error
+                }
+            }
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+        }
+    }
+
+    struct FetchKind: AsyncAction {
+        let service: FriendSearchService
+
+        func excute(_ upkindCode: Int) async throws -> Response<Kind> {
+            if let fetched = try await service.search(.kind(upkind: upkindCode)) {
+                do {
+                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Kind>.self, from: fetched)
+                    return Response(results: sigunguResponse.items)
+                } catch let error {
+                    dump(fetched.prettyPrintedJSONString ?? "")
+                    throw error
+                }
+            }
+            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+        }
+    }
 
     struct FetchAnimal: AsyncAction {
         let service: FriendSearchService
@@ -43,7 +88,7 @@ struct Actions {
         func excute() async throws -> PaginatedResponse<Animal> {
             if let fetched = try await service.search(.animal(filteredItem: filter)) {
                 do {
-                    let animalResponse = try JSONDecoder().decode(APIResponse<Animal>.self, from: fetched)
+                    let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: fetched)
                     return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
                                              pageNumber: animalResponse.pageNo,
                                              totalCounts: animalResponse.totalCount,

@@ -1,5 +1,5 @@
 //
-//  AnimalResponse.swift
+//  PaginatedAPIResponse.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/14/24.
@@ -55,9 +55,9 @@ import Foundation
  
  */
 
-/// i love you, my doggie -niko
-
-struct APIResponse<T: Codable>: Decodable {
+// MARK: - API Response for "Sido and Animal"
+/// i love you, my doggie -niko 
+struct PaginatedAPIResponse<T: Codable>: Decodable {
     let requestNumber: Int
     let resultCode: String
     let resultMessage: String
