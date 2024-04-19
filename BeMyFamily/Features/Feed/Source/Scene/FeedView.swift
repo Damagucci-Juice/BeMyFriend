@@ -14,8 +14,10 @@ struct FeedView: View {
     @State private var page = 1
     var body: some View {
         ScrollView {
-            ForEach(animals) { animal in
-                LazyImage(url: URL(string: animal.thumbnailURL))
+            VStack(spacing: UIConstants.Spacing.interFeedItem) {
+                ForEach(animals) { animal in
+                    FeedItemView(animal: animal)
+                }
             }
         }
         .task {
@@ -74,4 +76,5 @@ struct FeedView: View {
 
     return FeedView()
         .environmentObject(service)
+        .preferredColorScheme(.dark)
 }

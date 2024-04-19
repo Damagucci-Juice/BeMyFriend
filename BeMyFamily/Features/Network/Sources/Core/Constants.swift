@@ -23,10 +23,6 @@ struct Constants {
         static let totalSidoCount = "17"
     }
 
-    struct Image {
-        static let friendPlaceholder = "FriendPlaceholder"
-    }
-
     struct Translations {
         static let loading = "Loading"
         static let okay = "OK"
