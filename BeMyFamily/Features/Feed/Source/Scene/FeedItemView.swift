@@ -8,8 +8,8 @@ import NukeUI
 import SwiftUI
 
 struct FeedItemView: View {
-    @State private var isLiked = false
     let animal: Animal
+    var favoriteToggled: (Animal) -> Void
 
     var body: some View {
         VStack {
@@ -47,19 +47,19 @@ struct FeedItemView: View {
 
                 // favortie button
                 Button {
-                    isLiked.toggle()
+                    favoriteToggled(animal)
                 } label: {
                     Image(systemName: UIConstants.Image.heart)
                         .resizable()
                         .scaledToFill()
-                        .foregroundStyle(isLiked ? .red.opacity(UIConstants.Opacity.border) : .gray)
+                        .foregroundStyle(animal.isFavorite ? .red.opacity(UIConstants.Opacity.border) : .gray)
                         .frame(width: UIConstants.Frame.heartHeight,
                                height: UIConstants.Frame.heartHeight)
                         .overlay {
                             Image(systemName: UIConstants.Image.heartWithStroke)
                                 .resizable()
                                 .scaledToFill()
-                                .foregroundStyle(isLiked ? .pink : .white.opacity(UIConstants.Opacity.border))
+                                .foregroundStyle(animal.isFavorite ? .pink : .white.opacity(UIConstants.Opacity.border))
                                 .frame(width: UIConstants.Frame.heartBorderHeight,
                                        height: UIConstants.Frame.heartBorderHeight)
                         }
@@ -83,13 +83,19 @@ struct FeedItemView: View {
 }
 
 #Preview {
+    @StateObject var reducer = FeedListReducer()
     let animals = ModelData().animals.items
 
     return ScrollView {
         VStack(spacing: UIConstants.Spacing.interFeedItem) {
-            FeedItemView(animal: animals[0])
-            FeedItemView(animal: animals[1])
+            FeedItemView(animal: animals[0]) { target in
+                reducer.updateFavorite(target)
+            }
+            FeedItemView(animal: animals[1]) { target in
+                reducer.updateFavorite(target)
+            }
         }
+        .environmentObject(reducer)
     }
     .preferredColorScheme(.dark)
 }

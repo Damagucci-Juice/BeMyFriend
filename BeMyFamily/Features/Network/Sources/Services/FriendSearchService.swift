@@ -38,13 +38,13 @@ public struct HttpStatusCode {
 }
 
 protocol SearchService: AnyObject {
-    func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error>
+//    func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error>
     func search(_ endpoint: FriendEndpoint) async throws -> Data?
-    func performRequest(urlRequest: URLRequest) -> AnyPublisher<Data, Error>
+//    func performRequest(urlRequest: URLRequest) -> AnyPublisher<Data, Error>
     func performRequest(urlRequest: URLRequest) async throws -> Data?
 }
 
-final class FriendSearchService: ObservableObject, SearchService {
+final class FriendSearchService: SearchService {
     private let session: URLSession
     private let friendCache: NSCache<NSString, CacheEntryObject> = NSCache()
 

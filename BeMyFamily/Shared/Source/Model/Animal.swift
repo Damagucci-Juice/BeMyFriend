@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Animal: Codable, Identifiable {
+struct Animal: Codable, Equatable, Identifiable {
     let id: String
     let thumbnailURL: String
     let happenDt, happenPlace, kindCD, colorCD: String
@@ -19,6 +19,7 @@ struct Animal: Codable, Identifiable {
     let neuterYn: String
     let specialMark, careNm, careTel, careAddr: String
     let orgNm, chargeNm, officetel: String
+    var isFavorite = false
 
     enum CodingKeys: String, CodingKey {
         case thumbnailURL = "filename"

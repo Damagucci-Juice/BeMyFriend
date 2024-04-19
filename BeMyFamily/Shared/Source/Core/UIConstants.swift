@@ -14,7 +14,7 @@ struct UIConstants {
         static let shareHeight = 32.0
         static let feedImageHeight = 500.0
         static let screenWidth = UIScreen.main.bounds.width
-        static let screenWidthWithPadding = screenWidth - (UIConstants.Padding.feedImemViewHorizontal * 2) // horizontal은 양 옆으로 적용되니까 곱하기 2
+        static let screenWidthWithPadding = screenWidth - (UIConstants.Padding.feedImemViewHorizontal * 2)
     }
 
     struct Padding {

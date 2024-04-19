@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct FavoriteView: View {
+    @EnvironmentObject var reducer: FeedListReducer
+
     var body: some View {
-        Text("FavoriteView")
+        ScrollView {
+            VStack(spacing: UIConstants.Spacing.interFeedItem) {
+                ForEach(reducer.liked) { animal in
+                    FeedItemView(animal: animal) {
+                        reducer.updateFavorite($0)
+                    }
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    FavoriteView()
+    @StateObject var reducer = FeedListReducer()
+    return FavoriteView()
+        .environmentObject(reducer)
+        .preferredColorScheme(.dark)
 }

@@ -9,12 +9,13 @@ import SwiftUI
 
 @main
 struct BeMyFamilyApp: App {
-    @StateObject private var service = FriendSearchService()
+    @StateObject private var reducer = FeedListReducer()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(service)
+                .environmentObject(reducer)
+                .preferredColorScheme(.dark)
         }
     }
 }
