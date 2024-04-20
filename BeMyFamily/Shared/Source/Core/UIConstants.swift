@@ -14,11 +14,11 @@ struct UIConstants {
         static let shareHeight = 32.0
         static let feedImageHeight = 500.0
         static let screenWidth = UIScreen.main.bounds.width
-        static let screenWidthWithPadding = screenWidth - (UIConstants.Padding.feedImemViewHorizontal * 2)
+        static let screenWidthWithPadding = screenWidth - UIConstants.Padding.feedImemViewHorizontal
     }
 
     struct Padding {
-        static let feedImemViewHorizontal = 8.0
+        static let feedImemViewHorizontal = 16.0
     }
 
     struct Opacity {
