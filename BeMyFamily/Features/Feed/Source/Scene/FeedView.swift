@@ -14,8 +14,8 @@ struct FeedView: View {
         ScrollView {
             VStack(spacing: UIConstants.Spacing.interFeedItem) {
                 ForEach(reducer.animals) { animal in
-                    FeedItemView(animal: animal) {
-                        reducer.updateFavorite($0)
+                    FeedItemView(animal: animal) { _ in
+                        reducer.updateFavorite(animal)
                     }
                 }
             }

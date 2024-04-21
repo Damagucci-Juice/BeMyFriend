@@ -10,13 +10,29 @@ import Foundation
 @Observable
 final class FeedListReducer: ObservableObject {
     private let service = FriendSearchService()
-    // TODO: - Movie에서 카테고리를 딕셔너리로 접근하듯이 보여주기
+    // MAYBE: - Movie에서 카테고리를 딕셔너리로 접근하듯이 보여주기
     private(set) var animals: [Animal] = []
     var liked: [Animal] {
-        animals.filter { animal in animal.isFavorite }
+        didSet {
+            save(using: liked)
+        }
     }
+
     private(set) var filter = AnimalFilter.example
     private(set) var page = 1
+
+    init() {
+        // MARK: - Load Saved Animals
+        self.liked = {
+            if let savedAnimals = UserDefaults.standard.object(forKey: Constants.Network.dbPath) as? Data {
+                let decoder = JSONDecoder()
+                if let loadedAnimals = try? decoder.decode([Animal].self, from: savedAnimals) {
+                    return loadedAnimals
+                }
+            }
+            return []
+        }()
+    }
 
     public func fetchAnimal() async {
         do {
@@ -29,12 +45,22 @@ final class FeedListReducer: ObservableObject {
         }
     }
 
-    // TODO: - JSON으로 저장해야할까? 아니면 User Default 정도면 충분할까?
     public func updateFavorite(_ animal: Animal) {
-        let selectedIndex = animals.firstIndex { target in
-            target == animal
+        if var first = animals.first(where: {$0 == animal}) {
+            if liked.contains(first) {
+                liked.removeAll(where: { $0 == first })
+            } else {
+                liked.append(first)
+            }
+            first.isFavorite.toggle()
         }
-        guard let selectedIndex else { return }
-        animals[selectedIndex].isFavorite.toggle()
+
+    }
+
+    private func save(using animals: [Animal]) {
+        let encoder = JSONEncoder()
+        if let encoded = try? encoder.encode(animals) {
+            UserDefaults.standard.set(encoded, forKey: Constants.Network.dbPath)
+        }
     }
 }

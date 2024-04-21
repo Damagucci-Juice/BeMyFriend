@@ -16,6 +16,7 @@ struct Constants {
         static let shelterPath = "shelter"
         static let kindPath = "kind"
         static let animalPath = "abandonmentPublic"
+        static let dbPath = "SavedAnimals"
 
     }
 
