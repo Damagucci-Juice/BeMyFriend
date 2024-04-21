@@ -7,7 +7,12 @@
 
 import Foundation
 
-struct Animal: Codable, Equatable, Identifiable {
+@Observable
+class Animal: Codable, Equatable, Identifiable {
+    static func == (lhs: Animal, rhs: Animal) -> Bool {
+        lhs.id == rhs.id
+    }
+
     let id: String
     let thumbnailURL: String
     let happenDt, happenPlace, kindCD, colorCD: String
