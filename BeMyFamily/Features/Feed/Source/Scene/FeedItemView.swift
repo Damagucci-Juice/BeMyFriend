@@ -21,9 +21,10 @@ struct FeedItemView: View {
                 Text(animal.processState)
                     .font(.processState)
             }
-
+            
             LazyImage(url: URL(string: animal.animalPhotoURL)) { state in
                 let roundedRectangle = RoundedRectangle(cornerRadius: UIConstants.Radius.mainImagePlaceholder)
+                let hasError = state.error != nil
 
                 if let image = state.image {
                     image
@@ -33,12 +34,18 @@ struct FeedItemView: View {
                                height: UIConstants.Frame.feedImageHeight)
                         .clipShape(roundedRectangle)
                 }
-                if state.isLoading {
+                if state.isLoading || hasError {
                     roundedRectangle
                         .stroke(.windowBackground, lineWidth: UIConstants.Line.feedItem)
                         .fill(.gray)
                         .frame(width: UIConstants.Frame.screenWidthWithPadding,
                                height: UIConstants.Frame.feedImageHeight)
+                        .overlay {
+                            if hasError {
+                                Text(Constants.Error.responseHadError)
+                                    .font(.processState)
+                            }
+                        }
                 }
             }
 
