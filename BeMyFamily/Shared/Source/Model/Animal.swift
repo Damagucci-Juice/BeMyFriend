@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable
-class Animal: Codable, Equatable, Identifiable {
+final class Animal: Codable, Equatable, Identifiable {
     static func == (lhs: Animal, rhs: Animal) -> Bool {
         lhs.id == rhs.id
     }
@@ -37,5 +37,4 @@ class Animal: Codable, Equatable, Identifiable {
         case neuterYn, specialMark, careNm, careTel, careAddr, orgNm, chargeNm, officetel
         case id = "desertionNo"
     }
-    // 중성화 여부, 성별 등의 타입을 쓰고 싶으면 NestedType 사용을 고려해야함
 }
