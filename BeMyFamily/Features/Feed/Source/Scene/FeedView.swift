@@ -19,6 +19,17 @@ struct FeedView: View {
                     }
                 }
             }
+            .background(GeometryReader { proxy -> Color in
+                let maxY = proxy.frame(in: .global).maxY
+                let height = proxy.size.height
+                // Check if the bottom of the ScrollView is reached
+                if maxY < UIScreen.main.bounds.height + 100 && !reducer.isLoading {
+                    Task {
+                        await reducer.fetchMoreAnimals()
+                    }
+                }
+                return Color.clear
+            })
         }
     }
 }

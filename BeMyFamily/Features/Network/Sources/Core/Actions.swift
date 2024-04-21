@@ -86,7 +86,7 @@ struct Actions {
         let page: Int
 
         func excute() async throws -> PaginatedResponse<Animal> {
-            if let fetched = try await service.search(.animal(filteredItem: filter)) {
+            if let fetched = try await service.search(.animal(filteredItem: filter, page: page)) {
                 do {
                     let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: fetched)
                     return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,

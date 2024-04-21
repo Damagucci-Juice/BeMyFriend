@@ -12,7 +12,7 @@ enum FriendEndpoint {
     case sigungu(sido: Int)
     case shelter(sido: Int, sigungu: Int)
     case kind(upkind: Int)
-    case animal(filteredItem: AnimalFilter) // PARAMETER: page, selected Filtering list,
+    case animal(filteredItem: AnimalFilter, page: Int)
 }
 
 extension FriendEndpoint {
@@ -60,10 +60,11 @@ extension FriendEndpoint {
             dict.updateValue("\(sigungu)", forKey: "org_cd")
         case .kind(let upkind):
             dict.updateValue("\(upkind)", forKey: "up_kind_cd")
-        case .animal(let animalFilter):
+        case .animal(let animalFilter, let page):
             animalFilter.toParams().enumerated().forEach { (_, value) in
                 dict.updateValue("\(value.value)", forKey: "\(value.key)")
             }
+            dict.updateValue("\(page)", forKey: "pageNo")
         }
         return dict
     }

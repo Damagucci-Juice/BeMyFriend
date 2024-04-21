@@ -21,7 +21,7 @@ final class FeedListReducer: ObservableObject {
             save(using: liked)
         }
     }
-
+    private(set) var isLoading = false
     private(set) var filter = AnimalFilter.example
     private(set) var page = 1
 
@@ -39,16 +39,33 @@ final class FeedListReducer: ObservableObject {
         }()
     }
 
-    public func fetchAnimal() async {
+    public func fetchAnimal() async throws -> [Animal] {
         do {
             let fetched = try await Actions.FetchAnimal(service: service, filter: filter, page: page).excute().results
-            await MainActor.run {
-                self.animals.append(contentsOf: fetched)
-            }
+            return fetched
         } catch {
-            dump(error.localizedDescription)
+            throw HTTPError.notFoundResponse
         }
     }
+
+    func fetchMoreAnimals() async {
+        guard !isLoading else { return }
+        isLoading = true
+        do {
+            let fetched = try await fetchAnimal()
+            await MainActor.run {
+                self.animals.append(contentsOf: fetched)
+                self.page += 1
+                self.isLoading = false
+            }
+        } catch {
+            await MainActor.run {
+                self.isLoading = false
+                print("Error fetching animals: \(error.localizedDescription)")
+            }
+        }
+    }
+
 
     public func updateFavorite(_ animal: Animal) {
         if var first = animals.first(where: {$0 == animal}) {
