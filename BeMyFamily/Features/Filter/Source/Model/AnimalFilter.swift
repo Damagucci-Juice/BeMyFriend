@@ -21,7 +21,7 @@ struct AnimalFilter: Codable {          // MARK: 데이터 항목 설명 친구
 //    let pageNumber: String?             // 페이지번호::0::"4"
 //    let numOfRows: String?              // 페이지당 보여줄 개수::0::"10"(기본10개)
 
-    static let example: Self = .init(beginDate: .now,
+    static let example: Self = .init(beginDate: .now.addingTimeInterval(-(86400*3)),
                                      endDate: .now,
                                      upkind: "417000",
                                      kind: nil,
