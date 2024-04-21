@@ -17,7 +17,6 @@ struct Constants {
         static let kindPath = "kind"
         static let animalPath = "abandonmentPublic"
         static let dbPath = "SavedAnimals"
-
     }
 
     struct NetworkParameters {
@@ -36,6 +35,7 @@ struct Constants {
         static let noDataError = "Error: No data received."
         static let noResultsFound = "No results were found for your search."
         static let statusCode404 = "404"
-        static let notFound = "Error 401 Pokemon not found"
+        static let notFound = "Error 401 Animal not found"
+        static let responseHadError = "Something went wrong."
     }
 }
