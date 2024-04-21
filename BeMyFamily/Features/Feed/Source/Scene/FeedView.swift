@@ -20,9 +20,6 @@ struct FeedView: View {
                 }
             }
         }
-        .task {
-            await reducer.fetchAnimal()
-        }
     }
 }
 
