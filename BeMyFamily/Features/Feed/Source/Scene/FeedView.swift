@@ -18,14 +18,18 @@ struct FeedView: View {
                         reducer.updateFavorite(animal)
                     }
                 }
+
+                if reducer.animals.isEmpty || reducer.isLoading {
+                    ProgressView()
+                }
             }
+            // MARK: - Fetch Animals when reached Bottom
             .background(GeometryReader { proxy -> Color in
                 let maxY = proxy.frame(in: .global).maxY
-                let height = proxy.size.height
-                // Check if the bottom of the ScrollView is reached
-                if maxY < UIScreen.main.bounds.height + 100 && !reducer.isLoading {
+                let reachedToBottom = maxY < UIConstants.Frame.screenHeight + 100
+                if reachedToBottom && !reducer.isLoading {
                     Task {
-                        await reducer.fetchMoreAnimals()
+                        await reducer.fetchAnimals()
                     }
                 }
                 return Color.clear

@@ -16,7 +16,6 @@ struct BeMyFamilyApp: App {
             ContentView()
                 .environmentObject(reducer)
                 .preferredColorScheme(.dark)
-                .task { await reducer.fetchMoreAnimals() }
         }
     }
 }

@@ -4,7 +4,6 @@
 //
 //  Created by Gucci on 4/19/24.
 //
-
 import Foundation
 
 @Observable
@@ -24,6 +23,7 @@ final class FeedListReducer: ObservableObject {
     private(set) var isLoading = false
     private(set) var filter = AnimalFilter.example
     private(set) var page = 1
+    private var fetchDebounce: DispatchWorkItem?
 
     init() {
         // MARK: - Load Saved Animals from User Defaualts
@@ -39,36 +39,42 @@ final class FeedListReducer: ObservableObject {
         }()
     }
 
-    public func fetchAnimal() async throws -> [Animal] {
-        do {
-            let fetched = try await Actions.FetchAnimal(service: service, filter: filter, page: page).excute().results
-            return fetched
-        } catch {
-            throw HTTPError.notFoundResponse
-        }
-    }
+    // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시
+    public func fetchAnimals() async {
+        fetchDebounce?.cancel()
 
-    func fetchMoreAnimals() async {
-        guard !isLoading else { return }
-        isLoading = true
-        do {
-            let fetched = try await fetchAnimal()
-            await MainActor.run {
-                self.animals.append(contentsOf: fetched)
-                self.page += 1
-                self.isLoading = false
-            }
-        } catch {
-            await MainActor.run {
-                self.isLoading = false
-                print("Error fetching animals: \(error.localizedDescription)")
+        let task = DispatchWorkItem {
+            Task { [weak self] in
+                await self?.performFetch()
             }
         }
-    }
+        fetchDebounce = task
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
+     }
 
+    private func performFetch() async {
+            guard !isLoading else { return }
+            isLoading = true
+
+            do {
+                let fetched = try await Actions.FetchAnimal(service: service,
+                                                            filter: filter,
+                                                            page: page).excute().results
+                await MainActor.run {
+                    self.animals.append(contentsOf: fetched)
+                    self.page += 1
+                    self.isLoading = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.isLoading = false
+                    print("Error fetching animals: \(error.localizedDescription)")
+                }
+            }
+        }
 
     public func updateFavorite(_ animal: Animal) {
-        if var first = animals.first(where: {$0 == animal}) {
+        if let first = animals.first(where: {$0 == animal}) {
             if liked.contains(first) {
                 liked.removeAll(where: { $0 == first })
             } else {

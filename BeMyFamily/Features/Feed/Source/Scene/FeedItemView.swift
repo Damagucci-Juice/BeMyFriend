@@ -21,7 +21,7 @@ struct FeedItemView: View {
                 Text(animal.processState)
                     .font(.processState)
             }
-            
+     
             LazyImage(url: URL(string: animal.animalPhotoURL)) { state in
                 let roundedRectangle = RoundedRectangle(cornerRadius: UIConstants.Radius.mainImagePlaceholder)
                 let hasError = state.error != nil

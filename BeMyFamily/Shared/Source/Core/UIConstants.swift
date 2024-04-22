@@ -14,6 +14,7 @@ struct UIConstants {
         static let shareHeight = 32.0
         static let feedImageHeight = 500.0
         static let screenWidth = UIScreen.main.bounds.width
+        static let screenHeight = UIScreen.main.bounds.height
         static let screenWidthWithPadding = screenWidth - UIConstants.Padding.feedImemViewHorizontal
     }
 
