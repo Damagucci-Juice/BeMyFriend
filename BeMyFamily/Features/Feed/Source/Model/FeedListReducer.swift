@@ -23,7 +23,7 @@ final class FeedListReducer: ObservableObject {
     private(set) var isLoading = false
     private(set) var filter = AnimalFilter.example
     private(set) var page = 1
-    private var fetchDebounce: DispatchWorkItem?
+    private var lastFetchTime: Date?
 
     init() {
         // MARK: - Load Saved Animals from User Defaualts
@@ -41,15 +41,16 @@ final class FeedListReducer: ObservableObject {
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시
     public func fetchAnimals() async {
-        fetchDebounce?.cancel()
-
-        let task = DispatchWorkItem {
-            Task { [weak self] in
-                await self?.performFetch()
-            }
+        let now = Date()
+        let fetchIntervalSec = 0.3
+        guard lastFetchTime == nil || now.timeIntervalSince(lastFetchTime!) > fetchIntervalSec else {
+            return
         }
-        fetchDebounce = task
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
+        lastFetchTime = now
+
+        Task {
+            await performFetch()
+        }
      }
 
     private func performFetch() async {

@@ -26,7 +26,8 @@ struct FeedView: View {
             // MARK: - Fetch Animals when reached Bottom
             .background(GeometryReader { proxy -> Color in
                 let maxY = proxy.frame(in: .global).maxY
-                let reachedToBottom = maxY < UIConstants.Frame.screenHeight + 100
+                let throttle = 150.0
+                let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
                 if reachedToBottom && !reducer.isLoading {
                     Task {
                         await reducer.fetchAnimals()
