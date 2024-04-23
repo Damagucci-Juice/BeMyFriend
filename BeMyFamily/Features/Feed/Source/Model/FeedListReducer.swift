@@ -53,17 +53,18 @@ final class FeedListReducer: ObservableObject {
         // MARK: - fetch Kind information
         let kindFetchAction =  Actions.FetchKind(service: service)
         Task {
-            for upkind in Upkind.allCases { // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 1
-                if let fetched = try? await kindFetchAction.excute(upkind.rawValue).results {
-                    kind[upkind] = fetched
-                }
+            do {
+                self.kind = try await fetchKind(by: Upkind.allCases)
+            } catch {
+                print("failed at fetching kind using by upkind")
             }
         }
 
         // MARK: - fetch sido, sigungu, shelter information
         // TODO: - 장풍 제거 어떻게 할까? 
         Task {
-            if let sido = try? await Actions.FetchSido(service: service).excute().results { // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 2
+            // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 2
+            if let sido = try? await Actions.FetchSido(service: service).excute().results {
                 for eachSido in sido {
                     if let sigungu = try? await Actions.FetchSigungu(service: service).excute(eachSido.id).results {
                         province[eachSido] = sigungu
@@ -76,6 +77,25 @@ final class FeedListReducer: ObservableObject {
                 }
                 self.sido = sido 
             }
+        }
+    }
+    
+    // MARK: - swift concurrency with parrall
+    func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
+        try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
+            for upkind in upkinds {
+                group.addTask {
+                    let fetchedKind = try await Actions.FetchKind(service: self.service).excute(upkind.id).results
+                    return (upkind, fetchedKind)
+                }
+            }
+            var kinds = [Upkind: [Kind]]()
+
+            for try await (upkind, fetchedKind) in group {
+                kinds[upkind] = fetchedKind
+            }
+
+            return kinds
         }
     }
 
