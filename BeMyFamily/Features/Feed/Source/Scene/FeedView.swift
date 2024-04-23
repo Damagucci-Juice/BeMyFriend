@@ -10,18 +10,12 @@ import SwiftUI
 struct FeedView: View {
     @EnvironmentObject var reducer: FeedListReducer
     @State private var showfilter = false
-    private var selectedAnimals: [Animal] {
-        if reducer.menu == .filter, let selectedFilter = reducer.selectedFilter {
-            return reducer.filtered[selectedFilter, default: reducer.animals]
-        }
-        return reducer.animals
-    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: UIConstants.Spacing.interFeedItem) {
-                    ForEach(selectedAnimals) { animal in
+                    ForEach(reducer.selectedAnimals) { animal in
                         FeedItemView(animal: animal) { _ in
                             reducer.updateFavorite(animal)
                         }

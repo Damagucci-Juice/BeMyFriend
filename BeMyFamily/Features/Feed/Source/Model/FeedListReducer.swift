@@ -30,6 +30,12 @@ final class FeedListReducer: ObservableObject {
     private(set) var isLoading = false
     private(set) var page = 1
     private var lastFetchTime: Date?
+    var selectedAnimals: [Animal] {
+        if menu == .filter, let selectedFilter = selectedFilter {
+            return filtered[selectedFilter, default: animals]
+        }
+        return animals
+    }
 
     init() {
         // MARK: - Load Saved Animals from User Defaualts
