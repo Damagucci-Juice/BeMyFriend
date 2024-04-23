@@ -28,24 +28,24 @@ struct AnimalFilterForm: View {
                     DatePicker("시작일", selection: $beginDate, displayedComponents: .date)
                     DatePicker("종료일", selection: $endDate, displayedComponents: .date)
                 }
-                
+
                 Section("어떤 종을 보고 싶으신가요?") {
                     Picker("축종", selection: $upkind) { // TODO: - 축종 전체를 보고 싶으면 어떻게 해야할까?
                         Text("Empty")
                             .tag(nil as Upkind?)
-                        
+
                         ForEach(Upkind.allCases, id: \.self) { upkind in
                             Text(upkind.text)
                                 .tag(upkind as Upkind?)
                         }
                     }
-                    
+
                     if let upkind {
                         Picker("품종", selection: $kind) {
                             let kinds = reducer.kind[upkind, default: []]
                             Text("Empty")
                                 .tag(nil as Kind?)
-                            
+
                             ForEach(kinds, id: \.self) { eachKind in
                                 Text(eachKind.name)
                                     .tag(eachKind as Kind?)
@@ -53,14 +53,14 @@ struct AnimalFilterForm: View {
                         }
                     }
                 }
-                
+
                 Section("지역을 골라주세요") {
                     // TODO: - 시도, 시군구, 차례대로 보호소가 열리게끔 할 수 있나?
                     // TODO: - 시도가 너무 늦게 열림...
                     Picker("시도", selection: $sido) {    // TODO: - 시도 전체를 보고 싶으면 어떻게 해야할까?
                         Text("Empty")
                             .tag(nil as Sido?)
-                        
+
                         ForEach(reducer.sido, id: \.self) { eachSido in
                             Text(eachSido.name)
                                 .tag(eachSido as Sido?)
@@ -72,13 +72,13 @@ struct AnimalFilterForm: View {
                             sigungu = firstSigugn
                         }
                     }
-                    
+
                     if let sido {
                         Picker("시군구", selection: $sigungu) {
                             let sigungus = reducer.province[sido, default: []]
                             Text("Empty")
                                 .tag(nil as Sigungu?)
-                            
+
                             ForEach(sigungus, id: \.self) { eachSigungu in
                                 Text(eachSigungu.name)
                                     .tag(eachSigungu as Sigungu?)
@@ -92,13 +92,13 @@ struct AnimalFilterForm: View {
                         }
                     }
                 }
-                
+
                 if let sido, let sigungu {
                     Section("보호소를 선택하세요.") {
                         Picker("보호소", selection: $shelter) {
                             Text("Emtpy")
                                 .tag(nil as Shelter?)
-                            
+
                             let shelter = reducer.shelter[sigungu, default: []]
                             ForEach(shelter, id: \.self) { eachShelter in
                                 Text(eachShelter.name)
@@ -107,24 +107,24 @@ struct AnimalFilterForm: View {
                         }
                     }
                 }
-                
+
                 Section("현재 어떤 상태인가요?") {
                     Picker("처리 상태", selection: $state) {
                         Text("Empty")
                             .tag(nil as ProcessState?)
-                        
+
                         ForEach(ProcessState.allCases, id: \.self) { process in
                             Text(process.text)
                                 .tag(process as ProcessState?)
                         }
                     }
                 }
-                
+
                 Section("중성화 여부") {
                     Picker("중성화 여부", selection: $neutral) {
                         Text("Empty")
                             .tag(nil as Neutralization?)
-                        
+
                         ForEach(Neutralization.allCases, id: \.self) { neutralization in
                             Text(neutralization.text)
                                 .tag(neutralization as Neutralization?)
@@ -174,7 +174,7 @@ extension AnimalFilterForm {
 
 #Preview {
     @StateObject var reducer = FeedListReducer()
-    
+
     return NavigationStack {
         AnimalFilterForm()
             .environmentObject(reducer)
