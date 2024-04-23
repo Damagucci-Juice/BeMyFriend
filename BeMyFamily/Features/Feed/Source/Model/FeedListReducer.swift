@@ -50,37 +50,20 @@ final class FeedListReducer: ObservableObject {
             return []
         }()
 
-        // MARK: - fetch Kind information
         Task {
             do {
                 self.kind = try await fetchKind(by: Upkind.allCases)
+                self.sido = try await Actions.FetchSido(service: service).excute().results
+                self.province = try await fetchSigungu(by: sido)
+                self.shelter = try await fetchShelter(by: province)
             } catch {
                 print("failed at fetching kind using by upkind")
-            }
-        }
-
-        // MARK: - fetch sido, sigungu, shelter information
-        // TODO: - 장풍 제거 어떻게 할까? 
-        Task {
-            // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 2
-            if let sido = try? await Actions.FetchSido(service: service).excute().results {
-                for eachSido in sido {
-                    if let sigungu = try? await Actions.FetchSigungu(service: service).excute(eachSido.id).results {
-                        province[eachSido] = sigungu
-                        for eachSigungu in sigungu {
-                            if let fetchedShelter = try? await Actions.FetchShelter(service: service).excute(eachSido.id, eachSigungu.id).results {
-                                shelter[eachSigungu] = fetchedShelter
-                            }
-                        }
-                    }
-                }
-                self.sido = sido 
             }
         }
     }
     
     // MARK: - swift concurrency with parrall
-    func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
+    private func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
         try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
             for upkind in upkinds {
                 group.addTask {
@@ -95,6 +78,41 @@ final class FeedListReducer: ObservableObject {
             }
 
             return kinds
+        }
+    }
+
+    private func fetchSigungu(by sidos: [Sido]) async throws -> [Sido: [Sigungu]] {
+        try await withThrowingTaskGroup(of: (Sido, [Sigungu]).self) { group in
+            for sido in sidos {
+                group.addTask {
+                    let fetchedSigungu = try await Actions.FetchSigungu(service: self.service).excute(sido.id).results
+                    return (sido, fetchedSigungu)
+                }
+            }
+
+            var sigungus = [Sido: [Sigungu]]()
+            for try await (sido, fetchedSigungu) in group {
+                sigungus[sido] = fetchedSigungu
+            }
+            return sigungus
+        }
+    }
+
+    private func fetchShelter(by province: [Sido: [Sigungu]]) async throws -> [Sigungu: [Shelter]] {
+        try await withThrowingTaskGroup(of: (Sigungu, [Shelter]).self) { group in
+            for (sido, sigungus) in province {
+                for eachSigungu in sigungus {
+                    group.addTask {
+                        let fetchedShelter = try await Actions.FetchShelter(service: self.service).excute(sido.id, eachSigungu.id).results
+                        return (eachSigungu, fetchedShelter)
+                    }
+                }
+            }
+            var shelters = [Sigungu: [Shelter]]()
+            for try await (eachSigungu, fetchedShelter) in group {
+                shelters[eachSigungu] = fetchedShelter
+            }
+            return shelters
         }
     }
 
