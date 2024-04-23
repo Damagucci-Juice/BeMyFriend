@@ -19,7 +19,7 @@ struct AnimalFilterForm: View {
     @State private var shelter: Shelter?
     @State private var state: ProcessState?
     @State private var neutral: Neutralization?
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -30,7 +30,7 @@ struct AnimalFilterForm: View {
                 }
 
                 Section("어떤 종을 보고 싶으신가요?") {
-                    Picker("축종", selection: $upkind) { // TODO: - 축종 전체를 보고 싶으면 어떻게 해야할까?
+                    Picker("축종", selection: $upkind) {
                         Text("Empty")
                             .tag(nil as Upkind?)
 
@@ -55,9 +55,7 @@ struct AnimalFilterForm: View {
                 }
 
                 Section("지역을 골라주세요") {
-                    // TODO: - 시도, 시군구, 차례대로 보호소가 열리게끔 할 수 있나?
-                    // TODO: - 시도가 너무 늦게 열림...
-                    Picker("시도", selection: $sido) {    // TODO: - 시도 전체를 보고 싶으면 어떻게 해야할까?
+                    Picker("시도", selection: $sido) {
                         Text("Empty")
                             .tag(nil as Sido?)
 
@@ -93,7 +91,7 @@ struct AnimalFilterForm: View {
                     }
                 }
 
-                if let sido, let sigungu {
+                if sido != nil, let sigungu {
                     Section("보호소를 선택하세요.") {
                         Picker("보호소", selection: $shelter) {
                             Text("Emtpy")
