@@ -54,8 +54,8 @@ final class FeedListReducer: ObservableObject {
             do {
                 self.kind = try await fetchKind(by: Upkind.allCases)
                 self.sido = try await Actions.FetchSido(service: service).excute().results
-                self.province = try await fetchSigungu(by: sido)
-                self.shelter = try await fetchShelter(by: province)
+                self.province = await fetchSigungu(by: sido)
+                self.shelter = await fetchShelter(by: province)
             } catch {
                 print("failed at fetching kind using by upkind")
             }
@@ -81,35 +81,49 @@ final class FeedListReducer: ObservableObject {
         }
     }
 
-    private func fetchSigungu(by sidos: [Sido]) async throws -> [Sido: [Sigungu]] {
-        try await withThrowingTaskGroup(of: (Sido, [Sigungu]).self) { group in
+    private func fetchSigungu(by sidos: [Sido]) async -> [Sido: [Sigungu]] {
+        await withTaskGroup(of: (Sido, [Sigungu]).self) { group in
             for sido in sidos {
                 group.addTask {
-                    let fetchedSigungu = try await Actions.FetchSigungu(service: self.service).excute(sido.id).results
-                    return (sido, fetchedSigungu)
+                    do {
+                        // swiftlint: disable line_length
+                        let fetchedSigungu = try await Actions.FetchSigungu(service: self.service).excute(sido.id).results
+                        // swiftlint: enable line_length
+                        return (sido, fetchedSigungu)
+                    } catch {
+                        NSLog("Error fetching Sigungu for \(sido.id): \(error)")
+                        return (sido, [])
+                    }
                 }
             }
 
             var sigungus = [Sido: [Sigungu]]()
-            for try await (eachSido, fetchedSigungu) in group {
+            for await (eachSido, fetchedSigungu) in group {
                 sigungus[eachSido] = fetchedSigungu
             }
             return sigungus
         }
     }
 
-    private func fetchShelter(by province: [Sido: [Sigungu]]) async throws -> [Sigungu: [Shelter]] {
-        try await withThrowingTaskGroup(of: (Sigungu, [Shelter]).self) { group in
+    private func fetchShelter(by province: [Sido: [Sigungu]]) async -> [Sigungu: [Shelter]] {
+        await withTaskGroup(of: (Sigungu, [Shelter]).self) { group in
             for (sido, sigungus) in province {
                 for eachSigungu in sigungus {
                     group.addTask {
-                        let fetchedShelter = try await Actions.FetchShelter(service: self.service).excute(sido.id, eachSigungu.id).results
-                        return (eachSigungu, fetchedShelter)
+                        do {
+                            // swiftlint: disable line_length
+                            let fetchedShelter = try await Actions.FetchShelter(service: self.service).excute(sido.id, eachSigungu.id).results
+                            // swiftlint: enable line_length
+                            return (eachSigungu, fetchedShelter)
+                        } catch {
+                            NSLog("Error fetching Shelter for \(sido.id): \(error)")
+                            return (eachSigungu, [])
+                        }
                     }
                 }
             }
             var shelters = [Sigungu: [Shelter]]()
-            for try await (eachSigungu, fetchedShelter) in group {
+            for await (eachSigungu, fetchedShelter) in group {
                 shelters[eachSigungu] = fetchedShelter
             }
             return shelters
