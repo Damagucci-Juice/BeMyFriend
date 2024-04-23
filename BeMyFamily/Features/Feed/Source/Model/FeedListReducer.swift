@@ -91,8 +91,8 @@ final class FeedListReducer: ObservableObject {
             }
 
             var sigungus = [Sido: [Sigungu]]()
-            for try await (sido, fetchedSigungu) in group {
-                sigungus[sido] = fetchedSigungu
+            for try await (eachSido, fetchedSigungu) in group {
+                sigungus[eachSido] = fetchedSigungu
             }
             return sigungus
         }
