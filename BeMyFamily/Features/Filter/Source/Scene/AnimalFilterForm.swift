@@ -78,8 +78,10 @@ struct AnimalFilterForm: View {
                                 .tag(nil as Sigungu?)
 
                             ForEach(sigungus, id: \.self) { eachSigungu in
-                                Text(eachSigungu.name)
-                                    .tag(eachSigungu as Sigungu?)
+                                if let sigunguName = eachSigungu.name {
+                                    Text(sigunguName)
+                                        .tag(eachSigungu as Sigungu?)
+                                }
                             }
                         }
                         .onChange(of: sigungu) { _, newSigungu in

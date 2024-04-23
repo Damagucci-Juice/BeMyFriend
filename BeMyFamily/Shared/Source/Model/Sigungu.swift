@@ -9,7 +9,7 @@ import Foundation
 
 struct Sigungu: Codable, Hashable, Identifiable {
     let id: String
-    let name: String
+    let name: String?
     let sidoId: String
 
     static let example = Self(id: "3220000", name: "강남구", sidoId: "6110000")
