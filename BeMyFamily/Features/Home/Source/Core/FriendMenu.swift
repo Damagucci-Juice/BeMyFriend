@@ -8,7 +8,7 @@
 import Foundation
 
 enum FriendMenu: CaseIterable {
-    case feed, favorite
+    case feed, favorite, filter
 
     var title: String {
         switch self {
@@ -16,6 +16,8 @@ enum FriendMenu: CaseIterable {
             return "Feed"
         case .favorite:
             return "Favorite"
+        case .filter:
+            return "Filter"
         }
     }
 }

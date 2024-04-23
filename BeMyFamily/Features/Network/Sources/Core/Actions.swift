@@ -32,7 +32,7 @@ struct Actions {
     struct FetchSigungu: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ sidoCode: Int) async throws -> Response<Sigungu> {
+        func excute(_ sidoCode: String) async throws -> Response<Sigungu> {
             if let fetched = try await service.search(.sigungu(sido: sidoCode)) {
                 do {
                     let sigunguResponse = try JSONDecoder().decode(APIResponse<Sigungu>.self, from: fetched)
@@ -49,7 +49,7 @@ struct Actions {
     struct FetchShelter: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ sidoCode: Int, _ sigunguCode: Int) async throws -> Response<Shelter> {
+        func excute(_ sidoCode: String, _ sigunguCode: String) async throws -> Response<Shelter> {
             if let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode)) {
                 do {
                     let sigunguResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
@@ -66,7 +66,7 @@ struct Actions {
     struct FetchKind: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ upkindCode: Int) async throws -> Response<Kind> {
+        func excute(_ upkindCode: String) async throws -> Response<Kind> {
             if let fetched = try await service.search(.kind(upkind: upkindCode)) {
                 do {
                     let sigunguResponse = try JSONDecoder().decode(APIResponse<Kind>.self, from: fetched)

@@ -9,9 +9,9 @@ import Foundation
 
 enum FriendEndpoint {
     case sido
-    case sigungu(sido: Int)
-    case shelter(sido: Int, sigungu: Int)
-    case kind(upkind: Int)
+    case sigungu(sido: String)
+    case shelter(sido: String, sigungu: String)
+    case kind(upkind: String)
     case animal(filteredItem: AnimalFilter, page: Int)
 }
 
@@ -54,7 +54,7 @@ extension FriendEndpoint {
             dict.updateValue(Constants.NetworkParameters.totalSidoCount, forKey: "numOfRows")
             dict.updateValue("1", forKey: "pageNo")
         case .sigungu(let sido):
-            dict.updateValue("\(sido)", forKey: "upr_cd")
+            dict.updateValue(sido, forKey: "upr_cd")
         case .shelter(let sido, let sigungu):
             dict.updateValue("\(sido)", forKey: "upr_cd")
             dict.updateValue("\(sigungu)", forKey: "org_cd")

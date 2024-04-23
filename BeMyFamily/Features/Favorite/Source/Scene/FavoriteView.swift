@@ -11,14 +11,17 @@ struct FavoriteView: View {
     @EnvironmentObject var reducer: FeedListReducer
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: UIConstants.Spacing.interFeedItem) {
-                ForEach(reducer.liked) { animal in
-                    FeedItemView(animal: animal) {
-                        reducer.updateFavorite($0)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: UIConstants.Spacing.interFeedItem) {
+                    ForEach(reducer.liked) { animal in
+                        FeedItemView(animal: animal) {
+                            reducer.updateFavorite($0)
+                        }
                     }
                 }
             }
+            .navigationTitle(reducer.menu.title)
         }
     }
 }

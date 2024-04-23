@@ -20,8 +20,14 @@ final class FeedListReducer: ObservableObject {
             save(using: liked)
         }
     }
+     var menu = FriendMenu.feed
+    private(set) var selectedFilter: AnimalFilter?
+    private(set) var filtered = [AnimalFilter: [Animal]]()
+    private(set) var kind = [Upkind: [Kind]]()
+    private(set) var sido = [Sido]()    // TODO: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
+    private(set) var province = [Sido: [Sigungu]]()
+    private(set) var shelter = [Sigungu: [Shelter]]()
     private(set) var isLoading = false
-    private(set) var filter = AnimalFilter.example
     private(set) var page = 1
     private var lastFetchTime: Date?
 
@@ -37,10 +43,38 @@ final class FeedListReducer: ObservableObject {
             }
             return []
         }()
+
+        // MARK: - fetch Kind information
+        let kindFetchAction =  Actions.FetchKind(service: service)
+        Task {
+            for upkind in Upkind.allCases { // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 1
+                if let fetched = try? await kindFetchAction.excute(upkind.rawValue).results {
+                    kind[upkind] = fetched
+                }
+            }
+        }
+
+        // MARK: - fetch sido, sigungu, shelter information
+        // TODO: - 장풍 제거 어떻게 할까? 
+        Task {
+            if let sido = try? await Actions.FetchSido(service: service).excute().results { // TODO: - 직렬적으로 하지 말고 병렬적으로 하기 2
+                for eachSido in sido {
+                    if let sigungu = try? await Actions.FetchSigungu(service: service).excute(eachSido.id).results {
+                        province[eachSido] = sigungu
+                        for eachSigungu in sigungu {
+                            if let fetchedShelter = try? await Actions.FetchShelter(service: service).excute(eachSido.id, eachSigungu.id).results {
+                                shelter[eachSigungu] = fetchedShelter
+                            }
+                        }
+                    }
+                }
+                self.sido = sido 
+            }
+        }
     }
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시
-    public func fetchAnimals() async {
+    public func fetchAnimals(_ filter: AnimalFilter? = nil) async {
         let now = Date()
         let fetchIntervalSec = 0.3
         guard lastFetchTime == nil || now.timeIntervalSince(lastFetchTime!) > fetchIntervalSec else {
@@ -49,22 +83,34 @@ final class FeedListReducer: ObservableObject {
         lastFetchTime = now
 
         Task {
-            await performFetch()
+            await performFetch(filter)
         }
      }
 
-    private func performFetch() async {
+    private func performFetch(_ filter: AnimalFilter?) async {
             guard !isLoading else { return }
             isLoading = true
 
             do {
-                let fetched = try await Actions.FetchAnimal(service: service,
-                                                            filter: filter,
-                                                            page: page).excute().results
-                await MainActor.run {
-                    self.animals.append(contentsOf: fetched)
-                    self.page += 1
-                    self.isLoading = false
+                if let filter {
+                    let fetchedFiltered = try await Actions.FetchAnimal(service: service,
+                                                                filter: filter,
+                                                                page: 1).excute().results
+                    await MainActor.run {
+                        self.page += 1
+                        setMenu(by: filter)
+                        self.filtered[filter, default: []] += fetchedFiltered
+                        self.isLoading = false
+                    }
+                } else {
+                    let fetched = try await Actions.FetchAnimal(service: service,
+                                                                filter: .example,
+                                                                page: page).excute().results
+                    await MainActor.run {
+                        self.animals.append(contentsOf: fetched)
+                        self.page += 1
+                        self.isLoading = false
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -98,5 +144,10 @@ final class FeedListReducer: ObservableObject {
                 first.isFavorite = true
             }
         }
+    }
+
+    private func setMenu(by filter: AnimalFilter) {
+        self.menu = .filter
+        self.selectedFilter = filter
     }
 }

@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct TabControlView: View {
-    @State private var selectedTab = FriendMenu.feed
+    @EnvironmentObject var reducer: FeedListReducer
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: $reducer.menu) {
             ForEach(FriendMenu.allCases, id: \.self) { menu in
                 switch menu {
-                case .feed:
+                case .feed, .filter:
                     FeedView()
                         .tabItem { Text(menu.title) }
                         .tag(menu)
