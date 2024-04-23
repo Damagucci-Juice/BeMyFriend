@@ -51,7 +51,6 @@ final class FeedListReducer: ObservableObject {
         }()
 
         // MARK: - fetch Kind information
-        let kindFetchAction =  Actions.FetchKind(service: service)
         Task {
             do {
                 self.kind = try await fetchKind(by: Upkind.allCases)
