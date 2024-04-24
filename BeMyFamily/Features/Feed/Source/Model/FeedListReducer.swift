@@ -9,46 +9,25 @@ import Foundation
 @Observable
 final class FeedListReducer: ObservableObject {
     private let service = FriendSearchService()
-    // MAYBE: - Movie에서 카테고리를 딕셔너리로 접근하듯이 보여주기
-    private(set) var animals: [Animal] = [] {
-        didSet {
-            syncWithLiked(animals)
-        }
-    }
-    var liked: [Animal] {
-        didSet {
-            save(using: liked)
-        }
-    }
-    var menu = FriendMenu.feed
-    private(set) var selectedFilter: AnimalFilter?
-    private(set) var filtered = [AnimalFilter: [Animal]]()
+
+    // MARK: - before progress
     private(set) var kind = [Upkind: [Kind]]()
-    private(set) var sido = [Sido]()    // TODO: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
+    private(set) var sido = [Sido]()    // MAYBE: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
     private(set) var province = [Sido: [Sigungu]]()
     private(set) var shelter = [Sigungu: [Shelter]]()
+
+    // MARK: - in progress
+    var menu = FriendMenu.feed
+    private(set) var selectedFilter: AnimalFilter?
+    private(set) var animalDict = [FriendMenu: [Animal]]()
     private(set) var isLoading = false
     private(set) var page = 1
+    private(set) var filterPage = 1
     private var lastFetchTime: Date?
-    var selectedAnimals: [Animal] {
-        if menu == .filter, let selectedFilter = selectedFilter {
-            return filtered[selectedFilter, default: animals]
-        }
-        return animals
-    }
 
     init() {
         // MARK: - Load Saved Animals from User Defaualts
-        self.liked = {
-            if let savedAnimals = UserDefaults.standard.object(forKey: Constants.Network.dbPath) as? Data {
-                let decoder = JSONDecoder()
-                if let loadedAnimals = try? decoder.decode([Animal].self, from: savedAnimals) {
-                    loadedAnimals.forEach { $0.isFavorite = true }
-                    return loadedAnimals
-                }
-            }
-            return []
-        }()
+        self.animalDict[FriendMenu.favorite] = loadSavedAnimals()
 
         Task {
             do {
@@ -61,7 +40,7 @@ final class FeedListReducer: ObservableObject {
             }
         }
     }
-    // TODO: - 이 흐름이 Actions로 가야하지 않을까...? 
+    // TODO: - 이 흐름이 Actions에 가야하지 않을까...?
     // MARK: - swift concurrency with parrall Begin
     private func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
         try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
@@ -145,67 +124,91 @@ final class FeedListReducer: ObservableObject {
         }
      }
 
+    @MainActor
     private func performFetch(_ filter: AnimalFilter?) async {
-            guard !isLoading else { return }
-            isLoading = true
+        guard !isLoading else { return }
+        isLoading = true
 
-            do {
-                if let filter {
-                    let fetchedFiltered = try await Actions.FetchAnimal(service: service,
-                                                                filter: filter,
-                                                                page: 1).excute().results
-                    await MainActor.run {
-                        self.page += 1
-                        setMenu(by: filter)
-                        self.filtered[filter, default: []] += fetchedFiltered
-                        self.isLoading = false
-                    }
-                } else {
-                    let fetched = try await Actions.FetchAnimal(service: service,
-                                                                filter: .example,
-                                                                page: page).excute().results
-                    await MainActor.run {
-                        self.animals.append(contentsOf: fetched)
-                        self.page += 1
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    self.isLoading = false
-                    print("Error fetching animals: \(error.localizedDescription)")
-                }
-            }
-        }
-
-    public func updateFavorite(_ animal: Animal) {
-        if let first = animals.first(where: {$0 == animal}) {
-            if liked.contains(first) {
-                liked.removeAll(where: { $0 == first })
+        let fetchedAnimals: [Animal]
+        do {
+            // TODO: - results 값이 비었다면 여기서 처리해야하나?
+            if let filter {
+                resetOccupied(with: filter)
+                fetchedAnimals = try await Actions.FetchAnimal(service: service,
+                                                                    filter: filter,
+                                                                    page: filterPage).excute().results
+                filterPage += 1
             } else {
-                liked.append(first)
+                fetchedAnimals = try await Actions.FetchAnimal(service: service,
+                                                            filter: .example,
+                                                            page: page).excute().results
+                page += 1
             }
-            first.isFavorite.toggle()
+
+            let fetchedAnimalsSyncdByFavorite =  syncWithFavorites(fetchedAnimals)
+            animalDict[menu, default: []] += fetchedAnimalsSyncdByFavorite
+            isLoading = false
+        } catch {
+            await MainActor.run {
+                self.isLoading = false
+                print("Error fetching animals: \(error.localizedDescription)")
+            }
         }
     }
 
-    private func save(using animals: [Animal]) {
+    public func updateFavorite(_ animal: Animal) {
+        let selectedAnimalList = animalDict[menu, default: []]
+        var likedAnimals = animalDict[FriendMenu.favorite, default: []]
+
+        if let heartedAnimal = selectedAnimalList.first(where: {$0 == animal}) {
+            if likedAnimals.contains(heartedAnimal) {
+                likedAnimals.removeAll(where: { $0 == heartedAnimal })
+            } else {
+                likedAnimals.append(heartedAnimal)
+            }
+            heartedAnimal.isFavorite.toggle()
+            animalDict[FriendMenu.favorite] = likedAnimals
+            saveFavorites(using: likedAnimals)
+        }
+    }
+
+    private func loadSavedAnimals() -> [Animal] {
+        if let savedAnimals = UserDefaults.standard.object(forKey: Constants.Network.dbPath) as? Data {
+            let decoder = JSONDecoder()
+            if let loadedAnimals = try? decoder.decode([Animal].self, from: savedAnimals) {
+                loadedAnimals.forEach { $0.isFavorite = true }
+                return loadedAnimals
+            }
+        }
+        return []
+    }
+
+    private func saveFavorites(using animals: [Animal]) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(animals) {
             UserDefaults.standard.set(encoded, forKey: Constants.Network.dbPath)
         }
     }
 
-    private func syncWithLiked(_ animal: [Animal]) {
+    private func syncWithFavorites(_ animal: [Animal]) -> [Animal] {
+        let liked = self.animalDict[FriendMenu.favorite, default: []]
         liked.forEach { likedAnimal in
-            if let first = animals.first(where: {$0 == likedAnimal }) {
+            if let first = animal.first(where: {$0 == likedAnimal }) {
                 first.isFavorite = true
             }
         }
+        return animal
     }
 
-    private func setMenu(by filter: AnimalFilter) {
-        self.menu = .filter
-        self.selectedFilter = filter
+    // 기존에 들고 있던 필터와 새로 들어온 필터가 다르면 초기화
+    private func resetOccupied(with filter: AnimalFilter) {
+        if self.selectedFilter != filter {
+            self.animalDict[self.menu, default: []].removeAll()
+            self.selectedFilter = filter
+        }
+    }
+
+    public func setMenu(_ menu: FriendMenu) {
+        self.menu = menu
     }
 }

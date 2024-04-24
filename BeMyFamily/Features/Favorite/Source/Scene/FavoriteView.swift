@@ -14,9 +14,9 @@ struct FavoriteView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: UIConstants.Spacing.interFeedItem) {
-                    ForEach(reducer.liked) { animal in
-                        FeedItemView(animal: animal) {
-                            reducer.updateFavorite($0)
+                    ForEach(reducer.animalDict[reducer.menu, default: []]) { animal in
+                        FeedItemView(animal: animal) { _ in
+                            reducer.updateFavorite(animal)
                         }
                     }
                 }

@@ -15,13 +15,13 @@ struct FeedView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: UIConstants.Spacing.interFeedItem) {
-                    ForEach(reducer.selectedAnimals) { animal in
+                    ForEach(reducer.animalDict[reducer.menu, default: []]) { animal in
                         FeedItemView(animal: animal) { _ in
                             reducer.updateFavorite(animal)
                         }
                     }
 
-                    if reducer.animals.isEmpty || reducer.isLoading {
+                    if reducer.animalDict.isEmpty || reducer.isLoading {
                         ProgressView()
                     }
                 }
@@ -31,8 +31,15 @@ struct FeedView: View {
                     let throttle = 150.0
                     let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
                     if reachedToBottom && !reducer.isLoading {
-                        Task {
-                            await reducer.fetchAnimals()
+                        // MARK: - 피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
+                        if reducer.menu == .feed {
+                            Task {
+                                await reducer.fetchAnimals()
+                            }
+                        } else if reducer.menu == .filter {
+                            Task {
+                                await reducer.fetchAnimals(reducer.selectedFilter)
+                            }
                         }
                     }
                     return Color.clear
