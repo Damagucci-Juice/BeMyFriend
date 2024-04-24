@@ -19,10 +19,21 @@ struct AnimalFilterForm: View {
     @State private var shelter: Shelter?
     @State private var state: ProcessState?
     @State private var neutral: Neutralization?
+    @State private var applyFilter = true
 
     var body: some View {
         NavigationStack {
             Form {
+                // MARK: - 필터 적용 & 해제하는 토글 스위치
+                Toggle("filter 적용", isOn: $applyFilter)
+                    .onChange(of: applyFilter) { _, newValue in
+                        let nextMenu: FriendMenu = newValue ? .filter : .feed
+                        reducer.setMenu(nextMenu)
+                        if !newValue {
+                            dismiss()
+                        }
+                    }
+
                 Section(header: Text("검색 일자")) {
                     // TODO: - 오늘 날짜 다음에는 선택 못하게 막기
                     DatePicker("시작일", selection: $beginDate, displayedComponents: .date)
@@ -148,6 +159,7 @@ struct AnimalFilterForm: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
+                        reducer.setMenu(.feed)
                         dismiss()
                     } label: {
                         Text("Cancel")
