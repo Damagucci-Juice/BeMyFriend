@@ -92,22 +92,35 @@ struct AnimalDetailView: View {
     private var actionButtons: some View {
         HStack {
             Spacer()
+            // TODO: - 컴포넌트화 1
             Button {
                 favoriteToggled(animal)
             } label: {
-                Image(systemName: animal.isFavorite ? UIConstants.Image.heart : UIConstants.Image.heartWithStroke)
+                Image(systemName: UIConstants.Image.heart)
                     .resizable()
-                    .scaledToFit()
-                    .foregroundColor(animal.isFavorite ? .red : .gray)
-                    .frame(width: 30, height: 30)
+                    .scaledToFill()
+                    .foregroundStyle(animal.isFavorite ? .red.opacity(UIConstants.Opacity.border) : .gray)
+                    .frame(width: UIConstants.Frame.heartHeight,
+                           height: UIConstants.Frame.heartHeight)
+                    .overlay {
+                        Image(systemName: UIConstants.Image.heartWithStroke)
+                            .resizable()
+                            .scaledToFill()
+                            .foregroundStyle(animal.isFavorite ? .pink : .white.opacity(UIConstants.Opacity.border))
+                            .frame(width: UIConstants.Frame.heartBorderHeight,
+                                   height: UIConstants.Frame.heartBorderHeight)
+                    }
             }
+            // TODO: - 컴포넌트화 2
             Button {
                 // Sharing functionality or other actions can be implemented here
             } label: {
                 Image(systemName: UIConstants.Image.share)
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
+                    .scaledToFill()
+                    .foregroundStyle(.white)
+                    .frame(width: UIConstants.Frame.shareHeight,
+                           height: UIConstants.Frame.shareHeight)
             }
         }
         .padding(.vertical)

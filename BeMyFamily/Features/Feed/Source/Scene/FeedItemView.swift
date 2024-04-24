@@ -53,6 +53,7 @@ struct FeedItemView: View {
                 Spacer()
 
                 // favortie button
+                // TODO: - 컴포넌트화 3
                 Button {
                     favoriteToggled(animal)
                 } label: {
@@ -73,6 +74,7 @@ struct FeedItemView: View {
                 }
 
                 // share button
+                // TODO: - 컴포넌트화 4
                 Button {
 
                 } label: {
