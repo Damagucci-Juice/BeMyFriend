@@ -13,13 +13,9 @@ struct TabControlView: View {
     var body: some View {
         TabView(selection: $reducer.menu) {
             ForEach(FriendMenu.allCases, id: \.self) { menu in
-                switch menu {
-                case .feed, .filter:
+                // MARK: - FilterView, FavoriteView는 FeedView 안에 중첩 구현
+                if menu != .filter {
                     FeedView()
-                        .tabItem { Text(menu.title) }
-                        .tag(menu)
-                case .favorite:
-                    FavoriteView()
                         .tabItem { Text(menu.title) }
                         .tag(menu)
                 }

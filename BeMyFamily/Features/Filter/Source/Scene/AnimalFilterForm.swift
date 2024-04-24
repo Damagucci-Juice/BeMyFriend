@@ -140,7 +140,7 @@ struct AnimalFilterForm: View {
                         Task {
                             await fetchAnimalsWithFilter()
                         }
-                        reducer.setMenu(.favorite)
+                        reducer.setMenu(.filter)
                         dismiss()
                     } label: {
                         Text("Done")
