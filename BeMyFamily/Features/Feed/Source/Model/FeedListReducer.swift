@@ -20,7 +20,7 @@ final class FeedListReducer: ObservableObject {
             save(using: liked)
         }
     }
-     var menu = FriendMenu.feed
+    var menu = FriendMenu.feed
     private(set) var selectedFilter: AnimalFilter?
     private(set) var filtered = [AnimalFilter: [Animal]]()
     private(set) var kind = [Upkind: [Kind]]()
@@ -61,8 +61,8 @@ final class FeedListReducer: ObservableObject {
             }
         }
     }
-    
-    // MARK: - swift concurrency with parrall
+    // TODO: - 이 흐름이 Actions로 가야하지 않을까...? 
+    // MARK: - swift concurrency with parrall Begin
     private func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
         try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
             for upkind in upkinds {
@@ -129,6 +129,7 @@ final class FeedListReducer: ObservableObject {
             return shelters
         }
     }
+    // MARK: - swift concurrency with parrall End
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시
     public func fetchAnimals(_ filter: AnimalFilter? = nil) async {
