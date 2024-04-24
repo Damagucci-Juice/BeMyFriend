@@ -17,13 +17,9 @@ struct FeedView: View {
                 VStack(spacing: UIConstants.Spacing.interFeedItem) {
                     ForEach(reducer.animalDict[reducer.menu, default: []]) { animal in
                         NavigationLink {
-                            AnimalDetailView(animal: animal) { _ in
-                                reducer.updateFavorite(animal)
-                            }
+                            AnimalDetailView(animal: animal, favoriteToggled: reducer.updateFavorite)
                         } label: {
-                            FeedItemView(animal: animal) { _ in
-                                reducer.updateFavorite(animal)
-                            }
+                            FeedItemView(animal: animal, favoriteToggled: reducer.updateFavorite)
                         }
                     }
 

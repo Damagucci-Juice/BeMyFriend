@@ -95,12 +95,8 @@ struct FeedItemView: View {
 
     return ScrollView {
         VStack(spacing: UIConstants.Spacing.interFeedItem) {
-            FeedItemView(animal: animals[0]) { target in
-                reducer.updateFavorite(target)
-            }
-            FeedItemView(animal: animals[1]) { target in
-                reducer.updateFavorite(target)
-            }
+            FeedItemView(animal: animals[0], favoriteToggled: reducer.updateFavorite)
+            FeedItemView(animal: animals[1], favoriteToggled: reducer.updateFavorite)
         }
         .environmentObject(reducer)
     }

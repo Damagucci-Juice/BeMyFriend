@@ -119,8 +119,6 @@ struct AnimalDetailView: View {
     @StateObject var reducer = FeedListReducer()
 
     return NavigationView {
-        AnimalDetailView(animal: animals[0]) { updatedAnimal in
-            reducer.updateFavorite(updatedAnimal)
-        }
+        AnimalDetailView(animal: animals[0], favoriteToggled: reducer.updateFavorite)
     }
 }
