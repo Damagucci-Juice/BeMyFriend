@@ -166,10 +166,10 @@ final class FeedListReducer: ObservableObject {
             } else {
                 likedAnimals.append(heartedAnimal)
             }
-            heartedAnimal.isFavorite.toggle()
             animalDict[FriendMenu.favorite] = likedAnimals
             saveFavorites(using: likedAnimals)
         }
+        animal.isFavorite.toggle()
     }
 
     private func loadSavedAnimals() -> [Animal] {
