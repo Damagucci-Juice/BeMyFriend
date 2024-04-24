@@ -31,6 +31,7 @@ struct UIConstants {
         static let heart = "heart.fill"
         static let heartWithStroke = "heart"
         static let share = "square.and.arrow.up.circle.fill"
+        static let filter = "line.3.horizontal.decrease.circle"
     }
 
     struct Radius {

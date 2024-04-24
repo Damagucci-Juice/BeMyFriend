@@ -58,7 +58,7 @@ struct FeedView: View {
                         Button {
                             showfilter.toggle()
                         } label: {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
+                            Image(systemName: UIConstants.Image.filter)
                         }
                     }
                 }
