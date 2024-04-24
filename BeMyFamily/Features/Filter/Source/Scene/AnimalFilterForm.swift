@@ -10,7 +10,7 @@ import SwiftUI
 struct AnimalFilterForm: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var reducer: FeedListReducer
-    @State private var beginDate = Date.now.addingTimeInterval(-(86400*3)) // 3일 전
+    @State private var beginDate = Date.now.addingTimeInterval(-(86400*10)) // 10일 전
     @State private var endDate = Date()
     @State private var upkind: Upkind?
     @State private var kind: Kind?
