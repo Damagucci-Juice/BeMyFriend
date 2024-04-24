@@ -21,6 +21,7 @@ struct FeedView: View {
                         } label: {
                             FeedItemView(animal: animal, favoriteToggled: reducer.updateFavorite)
                         }
+                        .tint(.primary)
                     }
 
                     if reducer.animalDict.isEmpty || reducer.isLoading {
