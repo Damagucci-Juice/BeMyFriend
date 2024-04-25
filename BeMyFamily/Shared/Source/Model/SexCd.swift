@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum SexCD: String, Codable, CaseIterable {
     case femail = "F"
     case male = "M"
