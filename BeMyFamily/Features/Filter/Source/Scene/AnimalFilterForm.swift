@@ -17,7 +17,7 @@ struct AnimalFilterForm: View {
     @State private var sido: Sido?
     @State private var sigungu: Sigungu?
     @State private var shelter: Shelter?
-    @State private var state: ProcessState?
+    @State private var state = ProcessState.all
     @State private var neutral: Neutralization?
     @State private var applyFilter = true
 
@@ -115,19 +115,15 @@ struct AnimalFilterForm: View {
 
                 Section("현재 어떤 상태인가요?") {
                     Picker("처리 상태", selection: $state) {
-                        Text("Empty")
-                            .tag(nil as ProcessState?)
-
                         ForEach(ProcessState.allCases, id: \.self) { process in
                             Text(process.text)
-                                .tag(process as ProcessState?)
                         }
                     }
                 }
 
                 Section("중성화 여부") {
                     Picker("중성화 여부", selection: $neutral) {
-                        Text("Empty")
+                        Text("전체")
                             .tag(nil as Neutralization?)
 
                         ForEach(Neutralization.allCases, id: \.self) { neutralization in
@@ -173,7 +169,7 @@ extension AnimalFilterForm {
                                   sido: sido?.id,
                                   sigungu: sigungu?.id,
                                   shelterNumber: shelter?.id,
-                                  processState: state?.id,
+                                  processState: state.id,
                                   neutralizationState: neutral?.id)
         await reducer.fetchAnimals(filter)
     }

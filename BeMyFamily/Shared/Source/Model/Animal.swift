@@ -20,8 +20,8 @@ final class Animal: Codable, Equatable, Identifiable {
     let noticeEdt: String
     let animalPhotoURL: String
     let processState: String
-    let sexCD: String
-    let neuterYn: String
+    let sexCD: SexCD
+    let neuterYn: Neutralization
     let specialMark, careNm, careTel, careAddr: String
     let orgNm, chargeNm, officetel: String
     var isFavorite = false

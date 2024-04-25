@@ -7,13 +7,12 @@
 
 import Foundation
 
-enum Neutralization: String, CaseIterable {
+enum Neutralization: String, Codable, CaseIterable {
     case yes = "Y"
     // swiftlint: disable identifier_name
     case no = "N"
     // swiftlint: enable identifier_name
-    case undefind = "U"
-    case all = ""
+    case unknown = "U"
 
     var id: String {
         return self.rawValue
@@ -25,10 +24,8 @@ enum Neutralization: String, CaseIterable {
             return "예"
         case .no:
             return "아니요"
-        case .undefind:
+        case .unknown:
             return "미상"
-        case .all:
-            return "전체"
         }
     }
 }
