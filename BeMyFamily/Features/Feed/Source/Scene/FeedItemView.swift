@@ -87,7 +87,8 @@ struct FeedItemView: View {
                 // TODO: - 컴포넌트화 4
                 if let renderedImage {
                     ShareLink(item: renderedImage,
-                              preview: SharePreview(Text("Shared image"), image: renderedImage))
+                              preview: SharePreview(Text(UIConstants.App.shareMessage),
+                                                    image: renderedImage))
                     .labelStyle(.iconOnly)
                     .imageScale(.large)
                     .symbolVariant(.fill)

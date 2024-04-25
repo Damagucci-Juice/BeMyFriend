@@ -53,6 +53,7 @@ struct UIConstants {
         static let filter = "Filter"
         static let feedIcon = "dog"
         static let favoriteIcon = "house.fill"
+        static let shareMessage = "❤️Be my family🦮"
     }
 
     struct Date {
