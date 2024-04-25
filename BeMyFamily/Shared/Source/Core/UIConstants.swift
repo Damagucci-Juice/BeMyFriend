@@ -57,4 +57,9 @@ struct UIConstants {
     struct Date {
         static let  aDayBefore = -86400.0
     }
+
+    struct FilterForm {
+        static let showAll = "전체보기"
+        static let title = "조건 설정"
+    }
 }

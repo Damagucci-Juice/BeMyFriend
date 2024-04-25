@@ -45,7 +45,7 @@ struct AnimalFilterForm: View {
 
                 Section("어떤 종을 보고 싶으신가요?") {
                     Picker("축종", selection: $upkind) {
-                        Text("Empty")
+                        Text(UIConstants.FilterForm.showAll)
                             .tag(nil as Upkind?)
 
                         ForEach(Upkind.allCases, id: \.self) { upkind in
@@ -57,7 +57,7 @@ struct AnimalFilterForm: View {
                     if let upkind {
                         Picker("품종", selection: $kind) {
                             let kinds = reducer.kind[upkind, default: []]
-                            Text("Empty")
+                            Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Kind?)
 
                             ForEach(kinds, id: \.self) { eachKind in
@@ -70,7 +70,7 @@ struct AnimalFilterForm: View {
 
                 Section("지역을 골라주세요") {
                     Picker("시도", selection: $sido) {
-                        Text("Empty")
+                        Text(UIConstants.FilterForm.showAll)
                             .tag(nil as Sido?)
 
                         ForEach(reducer.sido, id: \.self) { eachSido in
@@ -85,7 +85,7 @@ struct AnimalFilterForm: View {
                     if let sido {
                         Picker("시군구", selection: $sigungu) {
                             let sigungus = reducer.province[sido, default: []]
-                            Text("Empty")
+                            Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Sigungu?)
 
                             ForEach(sigungus, id: \.self) { eachSigungu in
@@ -104,7 +104,7 @@ struct AnimalFilterForm: View {
                 if sido != nil, let sigungu {
                     Section("보호소를 선택하세요.") {
                         Picker("보호소", selection: $shelter) {
-                            Text("Emtpy")
+                            Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Shelter?)
 
                             let shelter = reducer.shelter[sigungu, default: []]
@@ -126,7 +126,7 @@ struct AnimalFilterForm: View {
 
                 Section("중성화 여부") {
                     Picker("중성화 여부", selection: $neutral) {
-                        Text("전체")
+                        Text(UIConstants.FilterForm.showAll)
                             .tag(nil as Neutralization?)
 
                         ForEach(Neutralization.allCases, id: \.self) { neutralization in
@@ -136,7 +136,7 @@ struct AnimalFilterForm: View {
                     }
                 }
             }
-            .navigationTitle("Filter Animals")
+            .navigationTitle(UIConstants.FilterForm.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
