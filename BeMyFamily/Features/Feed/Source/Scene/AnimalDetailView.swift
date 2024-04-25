@@ -114,7 +114,7 @@ struct AnimalDetailView: View {
             }
             // TODO: - 컴포넌트화 2
             Button {
-                // Sharing functionality or other actions can be implemented here
+                share()
             } label: {
                 Image(systemName: UIConstants.Image.share)
                     .resizable()
@@ -127,6 +127,8 @@ struct AnimalDetailView: View {
         .padding(.vertical)
     }
 }
+
+extension AnimalDetailView: Sharable {}
 
 #Preview {
     @StateObject var reducer = FeedListReducer()

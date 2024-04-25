@@ -76,7 +76,7 @@ struct FeedItemView: View {
                 // share button
                 // TODO: - 컴포넌트화 4
                 Button {
-
+                    share()
                 } label: {
                     Image(systemName: UIConstants.Image.share)
                         .resizable()
@@ -90,6 +90,8 @@ struct FeedItemView: View {
         .padding(.horizontal, UIConstants.Padding.feedImemViewHorizontal)
     }
 }
+
+extension FeedItemView: Sharable { }
 
 #Preview {
     @StateObject var reducer = FeedListReducer()
