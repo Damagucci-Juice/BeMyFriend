@@ -8,6 +8,9 @@ import NukeUI
 import SwiftUI
 
 struct FeedItemView: View {
+    @Environment(\.displayScale) var displayScale
+    @State private var loadedImage: Image?
+    @State private var renderedImage: Image?
     let animal: Animal
     var favoriteToggled: (Animal) -> Void
 
@@ -33,6 +36,7 @@ struct FeedItemView: View {
                         .frame(width: UIConstants.Frame.screenWidthWithPadding,
                                height: UIConstants.Frame.feedImageHeight)
                         .clipShape(roundedRectangle)
+                        .onAppear { self.loadedImage = image }
                 }
                 if state.isLoading || hasError {
                     roundedRectangle
@@ -46,6 +50,12 @@ struct FeedItemView: View {
                                     .font(.processState)
                             }
                         }
+                }
+            }
+            .onChange(of: loadedImage) { _, newValue in
+                guard let newValue else { return }
+                Task {
+                    self.renderedImage = render(object: animal, img: newValue, displayScale: displayScale)
                 }
             }
 
@@ -75,15 +85,9 @@ struct FeedItemView: View {
 
                 // share button
                 // TODO: - 컴포넌트화 4
-                Button {
-                    share()
-                } label: {
-                    Image(systemName: UIConstants.Image.share)
-                        .resizable()
-                        .scaledToFill()
-                        .foregroundStyle(.white)
-                        .frame(width: UIConstants.Frame.shareHeight,
-                               height: UIConstants.Frame.shareHeight)
+                if let renderedImage {
+                    ShareLink(item: renderedImage,
+                              preview: SharePreview(Text("Shared image"), image: renderedImage))
                 }
             }
         }

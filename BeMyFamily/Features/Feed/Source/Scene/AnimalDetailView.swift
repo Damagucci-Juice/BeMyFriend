@@ -9,6 +9,9 @@ import SwiftUI
 import NukeUI
 
 struct AnimalDetailView: View {
+    @Environment(\.displayScale) var displayScale
+    @State private var loadedImage: Image?
+    @State private var renderedImage: Image?
     let animal: Animal
     var favoriteToggled: (Animal) -> Void
 
@@ -42,6 +45,7 @@ struct AnimalDetailView: View {
                     .frame(width: UIConstants.Frame.screenWidth,
                            height: UIConstants.Frame.feedImageHeight)
                     .clipShape(Rectangle())
+                    .onAppear { self.loadedImage = image }
             }
             if state.isLoading || hasError {
                 roundedRectangle
@@ -55,6 +59,12 @@ struct AnimalDetailView: View {
                                 .font(.caption)
                         }
                     }
+            }
+        }
+        .onChange(of: loadedImage) { _, newValue in
+            guard let newValue else { return }
+            Task {
+                self.renderedImage = render(object: animal, img: newValue, displayScale: displayScale)
             }
         }
     }
@@ -113,22 +123,17 @@ struct AnimalDetailView: View {
                     }
             }
             // TODO: - 컴포넌트화 2
-            Button {
-                share()
-            } label: {
-                Image(systemName: UIConstants.Image.share)
-                    .resizable()
-                    .scaledToFill()
-                    .foregroundStyle(.white)
-                    .frame(width: UIConstants.Frame.shareHeight,
-                           height: UIConstants.Frame.shareHeight)
+            if let renderedImage {
+                ShareLink(item: renderedImage,
+                          preview: SharePreview(Text("Shared image"), image: renderedImage))
             }
+
         }
         .padding(.vertical)
     }
 }
 
-extension AnimalDetailView: Sharable {}
+extension AnimalDetailView: Sharable { }
 
 #Preview {
     @StateObject var reducer = FeedListReducer()
