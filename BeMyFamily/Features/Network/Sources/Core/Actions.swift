@@ -52,8 +52,8 @@ struct Actions {
         func excute(_ sidoCode: String, _ sigunguCode: String) async throws -> Response<Shelter> {
             if let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode)) {
                 do {
-                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
-                    return Response(results: sigunguResponse.items)
+                    let shelterResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
+                    return Response(results: shelterResponse.items)
                 } catch let error {
                     dump(fetched.prettyPrintedJSONString ?? "")
                     throw error
