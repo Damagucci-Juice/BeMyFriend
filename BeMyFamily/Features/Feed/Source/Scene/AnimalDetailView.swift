@@ -25,6 +25,7 @@ struct AnimalDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("상세 정보")
         }
+        .scrollIndicators(.hidden)
     }
 
     @MainActor
