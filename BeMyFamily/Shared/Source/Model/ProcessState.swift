@@ -23,7 +23,7 @@ enum ProcessState: String, CaseIterable {
         case .notice:
             return "공고중"
         case .all:
-            return "전체"
+            return "전체보기"
         }
     }
 }
