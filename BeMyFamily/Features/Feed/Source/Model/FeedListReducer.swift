@@ -205,6 +205,7 @@ final class FeedListReducer: ObservableObject {
         if self.selectedFilter != filter {
             self.animalDict[self.menu, default: []].removeAll()
             self.selectedFilter = filter
+            self.filterPage = 1
         }
     }
 
