@@ -89,6 +89,7 @@ struct AnimalDetailView: View {
         }
     }
 
+    // TODO: - CardNewsView와 중복되는데 해결
     @ViewBuilder
     private func detailRow(label: String, value: String) -> some View {
         HStack(alignment: .firstTextBaseline) {
