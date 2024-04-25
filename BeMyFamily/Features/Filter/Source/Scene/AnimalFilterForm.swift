@@ -75,11 +75,8 @@ struct AnimalFilterForm: View {
                                 .tag(eachSido as Sido?)
                         }
                     }
-                    .onChange(of: sido) { _, newSido in
-                        guard let newSido else { return }
-                        if let firstSigugn = reducer.province[newSido, default: []].first {
-                            sigungu = firstSigugn
-                        }
+                    .onChange(of: sido) { _, _ in
+                        sigungu = nil
                     }
 
                     if let sido {
@@ -95,11 +92,8 @@ struct AnimalFilterForm: View {
                                 }
                             }
                         }
-                        .onChange(of: sigungu) { _, newSigungu in
-                            guard let newSigungu else { return }
-                            if let firstShelter = reducer.shelter[newSigungu, default: []].first {
-                                shelter = firstShelter
-                            }
+                        .onChange(of: sigungu) { _, _ in
+                            shelter = nil
                         }
                     }
                 }
