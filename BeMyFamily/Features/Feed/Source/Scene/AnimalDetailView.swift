@@ -40,7 +40,7 @@ struct AnimalDetailView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: UIConstants.Frame.screenWidth,
                            height: UIConstants.Frame.feedImageHeight)
-//                    .clipShape(roundedRectangle)
+                    .clipShape(Rectangle())
             }
             if state.isLoading || hasError {
                 roundedRectangle
@@ -128,8 +128,8 @@ struct AnimalDetailView: View {
 }
 
 #Preview {
-    let animals = ModelData().animals.items
     @StateObject var reducer = FeedListReducer()
+    let animals = ModelData().animals.items
 
     return NavigationView {
         AnimalDetailView(animal: animals[0], favoriteToggled: reducer.updateFavorite)
