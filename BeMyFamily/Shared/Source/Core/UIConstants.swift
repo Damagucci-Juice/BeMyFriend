@@ -53,4 +53,8 @@ struct UIConstants {
         static let feedIcon = "dog"
         static let favoriteIcon = "house.fill"
     }
+
+    struct Date {
+        static let  aDayBefore = -86400.0
+    }
 }

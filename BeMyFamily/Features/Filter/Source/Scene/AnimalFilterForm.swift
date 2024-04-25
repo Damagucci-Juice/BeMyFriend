@@ -10,7 +10,7 @@ import SwiftUI
 struct AnimalFilterForm: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var reducer: FeedListReducer
-    @State private var beginDate = Date.now.addingTimeInterval(-(86400*10)) // 10일 전
+    @State private var beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10) // 10일 전
     @State private var endDate = Date()
     @State private var upkind: Upkind?
     @State private var kind: Kind?
@@ -35,9 +35,12 @@ struct AnimalFilterForm: View {
                     }
 
                 Section(header: Text("검색 일자")) {
-                    // TODO: - 오늘 날짜 다음에는 선택 못하게 막기
-                    DatePicker("시작일", selection: $beginDate, displayedComponents: .date)
-                    DatePicker("종료일", selection: $endDate, displayedComponents: .date)
+                    DatePicker("시작일", selection: $beginDate,
+                               in: ...endDate.addingTimeInterval(UIConstants.Date.aDayBefore),
+                               displayedComponents: .date)
+                    DatePicker("종료일", selection: $endDate,
+                               in: ...Date(),
+                               displayedComponents: .date)
                 }
 
                 Section("어떤 종을 보고 싶으신가요?") {
