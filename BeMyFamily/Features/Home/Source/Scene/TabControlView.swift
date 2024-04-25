@@ -16,7 +16,7 @@ struct TabControlView: View {
                 // MARK: - FilterView, FavoriteView는 FeedView 안에 중첩 구현
                 if menu != .filter {
                     FeedView()
-                        .tabItem { Text(menu.title) }
+                        .tabItem { Label(menu.title, systemImage: menu.image) }
                         .tag(menu)
                 }
             }

@@ -13,11 +13,20 @@ enum FriendMenu: CaseIterable {
     var title: String {
         switch self {
         case .feed:
-            return "Feed"
+            return UIConstants.App.feed
         case .favorite:
-            return "Favorite"
+            return UIConstants.App.favorite
         case .filter:
-            return "Filter"
+            return UIConstants.App.filter
+        }
+    }
+
+    var image: String {
+        switch self {
+        case .feed, .filter:
+            return UIConstants.App.feedIcon
+        case .favorite:
+            return UIConstants.App.favoriteIcon
         }
     }
 }

@@ -45,4 +45,12 @@ struct UIConstants {
     struct Line {
         static let feedItem = 3.0
     }
+
+    struct App {
+        static let feed = "Feed"
+        static let favorite = "Favorite"
+        static let filter = "Filter"
+        static let feedIcon = "dog"
+        static let favoriteIcon = "house.fill"
+    }
 }
