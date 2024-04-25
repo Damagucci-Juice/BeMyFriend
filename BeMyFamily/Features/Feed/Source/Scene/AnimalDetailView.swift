@@ -110,7 +110,7 @@ struct AnimalDetailView: View {
                 Image(systemName: UIConstants.Image.heart)
                     .resizable()
                     .scaledToFill()
-                    .foregroundStyle(animal.isFavorite ? .red.opacity(UIConstants.Opacity.border) : .gray)
+                    .foregroundStyle(animal.isFavorite ? .red.opacity(UIConstants.Opacity.border) : .secondary)
                     .frame(width: UIConstants.Frame.heartHeight,
                            height: UIConstants.Frame.heartHeight)
                     .overlay {
@@ -126,6 +126,10 @@ struct AnimalDetailView: View {
             if let renderedImage {
                 ShareLink(item: renderedImage,
                           preview: SharePreview(Text("Shared image"), image: renderedImage))
+                .labelStyle(.iconOnly)
+                .imageScale(.large)
+                .symbolVariant(.fill)
+                .tint(.secondary)
             }
 
         }
