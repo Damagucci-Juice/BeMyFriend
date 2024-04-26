@@ -5,8 +5,9 @@
 //  Created by Gucci on 4/18/24.
 //
 
-import SwiftUI
 import NukeUI
+import SkeletonUI
+import SwiftUI
 
 struct AnimalDetailView: View {
     @Environment(\.displayScale) var displayScale
@@ -14,6 +15,7 @@ struct AnimalDetailView: View {
     @State private var renderedImage: Image?
     let animal: Animal
     var favoriteToggled: (Animal) -> Void
+    private var hasImage: Bool { loadedImage != nil ? false : true }
 
     var body: some View {
         ScrollView {
@@ -50,7 +52,10 @@ struct AnimalDetailView: View {
             if state.isLoading || hasError {
                 roundedRectangle
                     .stroke(.windowBackground, lineWidth: UIConstants.Line.feedItem)
-                    .fill(.gray)
+                    .skeleton(with: hasImage,
+                              animation: .linear(),
+                              appearance: .solid(color: .gray, background: .clear),
+                              shape: .rounded(.radius(UIConstants.Radius.mainImagePlaceholder, style: .circular)))
                     .frame(width: UIConstants.Frame.screenWidth,
                            height: UIConstants.Frame.feedImageHeight)
                     .overlay {
@@ -124,15 +129,14 @@ struct AnimalDetailView: View {
                     }
             }
             // TODO: - 컴포넌트화 2
-            if let renderedImage {
-                ShareLink(item: renderedImage,
-                          preview: SharePreview(Text(UIConstants.App.shareMessage),
-                                                image: renderedImage))
-                .labelStyle(.iconOnly)
-                .imageScale(.large)
-                .symbolVariant(.fill)
-                .tint(.secondary)
-            }
+            ShareLink(item: renderedImage ?? Image(.bemyfamilyIconTrans),
+                      preview: SharePreview(Text(UIConstants.App.shareMessage),
+                                            image: Image(.bemyfamilyIconTrans)))
+            .labelStyle(.iconOnly)
+            .imageScale(.large)
+            .symbolVariant(.fill)
+            .tint(.secondary)
+            .disabled(hasImage)
 
         }
         .padding(.vertical)

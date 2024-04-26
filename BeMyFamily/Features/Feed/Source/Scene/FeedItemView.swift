@@ -5,6 +5,7 @@
 //  Created by Gucci on 4/9/24.
 //
 import NukeUI
+import SkeletonUI
 import SwiftUI
 
 struct FeedItemView: View {
@@ -13,6 +14,7 @@ struct FeedItemView: View {
     @State private var renderedImage: Image?
     let animal: Animal
     var favoriteToggled: (Animal) -> Void
+    private var hasImage: Bool { loadedImage != nil ? false : true }
 
     var body: some View {
         VStack {
@@ -41,7 +43,10 @@ struct FeedItemView: View {
                 if state.isLoading || hasError {
                     roundedRectangle
                         .stroke(.windowBackground, lineWidth: UIConstants.Line.feedItem)
-                        .fill(.gray)
+                        .skeleton(with: hasImage,
+                                  animation: .linear(),
+                                  appearance: .solid(color: .gray, background: .clear),
+                                  shape: .rounded(.radius(UIConstants.Radius.mainImagePlaceholder, style: .circular)))
                         .frame(width: UIConstants.Frame.screenWidthWithPadding,
                                height: UIConstants.Frame.feedImageHeight)
                         .overlay {
@@ -85,15 +90,14 @@ struct FeedItemView: View {
 
                 // share button
                 // TODO: - 컴포넌트화 4
-                if let renderedImage {
-                    ShareLink(item: renderedImage,
-                              preview: SharePreview(Text(UIConstants.App.shareMessage),
-                                                    image: renderedImage))
-                    .labelStyle(.iconOnly)
-                    .imageScale(.large)
-                    .symbolVariant(.fill)
-                    .tint(.secondary)
-                }
+                ShareLink(item: renderedImage ?? Image(.bemyfamilyIconTrans),
+                          preview: SharePreview(Text(UIConstants.App.shareMessage),
+                                                image: Image(.bemyfamilyIconTrans)))
+                .labelStyle(.iconOnly)
+                .imageScale(.large)
+                .symbolVariant(.fill)
+                .tint(.secondary)
+                .disabled(hasImage)
             }
         }
         .padding(.horizontal, UIConstants.Padding.feedImemViewHorizontal)
