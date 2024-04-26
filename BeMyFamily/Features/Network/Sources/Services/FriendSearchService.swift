@@ -51,7 +51,7 @@ final class FriendSearchService: SearchService {
     public init(session: URLSession = .shared) {
         self.session = session
     }
-
+/*
     func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error> {
         return performRequest(urlRequest: endpoint.makeURLRequest())
     }
@@ -74,6 +74,7 @@ final class FriendSearchService: SearchService {
             }
             .eraseToAnyPublisher()
     }
+ */
 
     public func search(_ endpoint: FriendEndpoint) async throws -> Data? {
         return try await performRequest(urlRequest: endpoint.makeURLRequest())

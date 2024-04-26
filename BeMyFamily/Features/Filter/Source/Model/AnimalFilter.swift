@@ -19,7 +19,7 @@ struct AnimalFilter: Codable, Hashable {          // MARK: 데이터 항목 설�
     var processState: String?           // 전체: nil(빈값):: 공고중::"notice"::보호중"protect"
     var neutralizationState: String?    // 중성화여부::0::전체-nil,예:"Y",아니오:"N",미상:"U"
 
-    static let example: Self = .init(beginDate: .now.addingTimeInterval(-(86400*3)),
+    static let example: Self = .init(beginDate: .now.addingTimeInterval(-(86400*10)),
                                      endDate: .now,
                                      upkind: "417000",
                                      kind: nil,
