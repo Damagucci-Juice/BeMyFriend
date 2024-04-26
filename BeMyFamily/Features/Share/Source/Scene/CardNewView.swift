@@ -19,9 +19,10 @@ struct CardNewView: View {
                 .aspectRatio(contentMode: .fill)
                 .frame(width: UIConstants.Frame.screenWidthWithPadding,
                        height: UIConstants.Frame.feedImageHeight)
+                .clipShape(RoundedRectangle(cornerRadius: UIConstants.Radius.mainImagePlaceholder))
 
             detailSection
-                .padding(.horizontal)
+                .padding()
         }
     }
 
