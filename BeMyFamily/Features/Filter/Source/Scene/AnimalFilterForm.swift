@@ -24,16 +24,6 @@ struct AnimalFilterForm: View {
     var body: some View {
         NavigationStack {
             Form {
-                // MARK: - 필터 적용 & 해제하는 토글 스위치
-                Toggle("filter 적용", isOn: $applyFilter)
-                    .onChange(of: applyFilter) { _, newValue in
-                        let nextMenu: FriendMenu = newValue ? .filter : .feed
-                        reducer.setMenu(nextMenu)
-                        if !newValue {
-                            dismiss()
-                        }
-                    }
-
                 Section(header: Text("검색 일자")) {
                     DatePicker("시작일", selection: $beginDate,
                                in: ...endDate.addingTimeInterval(UIConstants.Date.aDayBefore),
@@ -133,6 +123,17 @@ struct AnimalFilterForm: View {
                             Text(neutralization.text)
                                 .tag(neutralization as Neutralization?)
                         }
+                    }
+                }
+
+                Button {
+                    reducer.setMenu(.feed)
+                    dismiss()
+                } label: {
+                    Label {
+                        Text("필터 초기화")
+                    } icon: {
+                        Image(systemName: UIConstants.Image.reset)
                     }
                 }
             }
