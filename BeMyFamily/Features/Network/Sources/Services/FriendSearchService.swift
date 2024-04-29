@@ -10,6 +10,7 @@ import Combine
 
 public enum HTTPError: Error {
     case notFoundResponse
+    case dataEmtpy(_ errorMessage: String)
     case invalidResponse(_ errorCode: Int)
 }
 

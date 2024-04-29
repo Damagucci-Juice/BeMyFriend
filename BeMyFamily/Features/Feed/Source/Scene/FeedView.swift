@@ -26,6 +26,8 @@ struct FeedView: View {
 
                     if reducer.animalDict.isEmpty || reducer.isLoading {
                         ProgressView()
+                    } else if reducer.isLast {
+                        Text("공고가 없습니다.")
                     }
                 }
                 // MARK: - Fetch Animals when reached Bottom
@@ -33,7 +35,7 @@ struct FeedView: View {
                     let maxY = proxy.frame(in: .global).maxY
                     let throttle = 150.0
                     let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
-                    if reachedToBottom && !reducer.isLoading {
+                    if reachedToBottom && !reducer.isLoading && !reducer.isLast {
                         // MARK: - 피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
                         if reducer.menu == .feed {
                             Task {

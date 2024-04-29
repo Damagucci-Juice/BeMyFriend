@@ -151,10 +151,23 @@ final class FeedListReducer: ObservableObject {
             let fetchedAnimalsSyncdByFavorite =  syncWithFavorites(fetchedAnimals)
             animalDict[menu, default: []] += fetchedAnimalsSyncdByFavorite
             isLoading = false
-        } catch {
+            self.isLast = false
+        } catch let error {
+            if let httpError = error as? HTTPError {
+                switch httpError {
+                case .dataEmtpy(let message):
+                    await MainActor.run {
+                        self.isLast = true
+                    }
+                    dump(message)
+                default:
+                    dump(error.localizedDescription)
+                }
+            }
+
             await MainActor.run {
                 self.isLoading = false
-                print("Error fetching animals: \(error.localizedDescription)")
+                dump("Error fetching animals at \(#function) in \(#file)")
             }
         }
     }

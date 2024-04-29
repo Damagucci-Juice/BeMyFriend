@@ -86,19 +86,20 @@ struct Actions {
         let page: Int
 
         func excute() async throws -> PaginatedResponse<Animal> {
-            if let fetched = try await service.search(.animal(filteredItem: filter, page: page)) {
-                do {
-                    let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: fetched)
-                    return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
-                                             pageNumber: animalResponse.pageNo,
-                                             totalCounts: animalResponse.totalCount,
-                                             results: animalResponse.items)
-                } catch let error {
-                    dump(fetched.prettyPrintedJSONString ?? "")
-                    throw error
-                }
+            guard let fetched = try await service.search(.animal(filteredItem: filter, page: page)) else {
+                throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
             }
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
+            do {
+                let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: fetched)
+                return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
+                                         pageNumber: animalResponse.pageNo,
+                                         totalCounts: animalResponse.totalCount,
+                                         results: animalResponse.items)
+            } catch let error {
+                dump(fetched.prettyPrintedJSONString ?? "")
+                // MARK: - 데이터가 없어서 PaginatedAPIResponse.items 항목을 생성하지 못해 디코딩 에러가 발생함
+                throw HTTPError.dataEmtpy(error.localizedDescription)
+            }
         }
     }
 }
