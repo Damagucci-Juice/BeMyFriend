@@ -11,6 +11,7 @@ final class FeedListReducer: ObservableObject {
     private let service = FriendSearchService()
 
     // MARK: - before progress
+    // TODO: - 이것도 별도의 리듀서로 작업을 해야한다.
     private(set) var kind = [Upkind: [Kind]]()
     private(set) var sido = [Sido]()    // MAYBE: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
     private(set) var province = [Sido: [Sigungu]]()
@@ -18,9 +19,11 @@ final class FeedListReducer: ObservableObject {
 
     // MARK: - in progress
     var menu = FriendMenu.feed
+    // TODO: - 이 프로퍼티를 Filter 리듀서에 보내놔야한다.
     private(set) var selectedFilter: AnimalFilter?
     private(set) var animalDict = [FriendMenu: [Animal]]()
     private(set) var isLoading = false
+    private(set) var isLast = false
     private(set) var page = 1
     private(set) var filterPage = 1
     private var lastFetchTime: Date?
