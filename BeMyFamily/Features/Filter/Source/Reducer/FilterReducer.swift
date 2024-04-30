@@ -14,7 +14,6 @@ final class FilterReducer: ObservableObject {
         self.service = service
     }
 
-    // TODO: - 캡슐화가 안된 상태
     var beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10) // 10일 전
     var endDate = Date()
     var upkind: Upkind?

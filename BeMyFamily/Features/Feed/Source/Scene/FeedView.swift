@@ -37,13 +37,15 @@ struct FeedView: View {
                     let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
                     if reachedToBottom && !reducer.isLoading && !reducer.isLast {
                         // MARK: - 피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
-                        if reducer.menu == .feed {
-                            Task {
-                                await reducer.fetchAnimals()
-                            }
-                        } else if reducer.menu == .filter {
-                            Task {
-                                await reducer.fetchAnimals(reducer.selectedFilter)
+                        Task {
+                            switch reducer.menu {
+                            case .feed:
+                                await reducer.fetchAnimalsIfCan()
+                            case .filter:
+                                await reducer.fetchAnimalsIfCan(reducer.selectedFilter)
+                            case .favorite:
+                                // No action needed for favorite
+                                break
                             }
                         }
                     }

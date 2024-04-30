@@ -166,7 +166,7 @@ struct AnimalFilterForm: View {
 extension AnimalFilterForm {
     func fetchAnimalsWithFilter() async {
         let filter = filterReducer.makeFilter()
-        await reducer.fetchAnimals(filter)
+        await reducer.fetchAnimalsIfCan(filter)
     }
 }
 

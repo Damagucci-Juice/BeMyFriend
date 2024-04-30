@@ -11,13 +11,13 @@ final class FeedListReducer: ObservableObject {
     private let service: FriendSearchService
 
     var menu = FriendMenu.feed
-    // TODO: - 이 프로퍼티를 Filter 리듀서에 보내놔야한다.
     private(set) var selectedFilter: AnimalFilter?
+    private(set) var filterPage = 1
+
     private(set) var animalDict = [FriendMenu: [Animal]]()
     private(set) var isLoading = false
     private(set) var isLast = false
     private(set) var page = 1
-    private(set) var filterPage = 1
     private var lastFetchTime: Date?
 
     init(service: FriendSearchService = .init(session: .shared)) {
@@ -27,7 +27,7 @@ final class FeedListReducer: ObservableObject {
     }
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시 + 쓰로틀링
-    public func fetchAnimals(_ filter: AnimalFilter? = nil) async {
+    public func fetchAnimalsIfCan(_ filter: AnimalFilter? = nil) async {
         let now = Date()
         let fetchIntervalSec = 0.3
         guard lastFetchTime == nil || now.timeIntervalSince(lastFetchTime!) > fetchIntervalSec else {
@@ -40,53 +40,48 @@ final class FeedListReducer: ObservableObject {
         }
      }
 
-
-    // TODO: - 이 이 함수 20줄 안쪽으로 떨어지게 수정
-    @MainActor
     private func performFetch(_ filter: AnimalFilter?) async {
         guard !isLoading else { return }
         isLoading = true
 
-        let fetchedAnimals: [Animal]
         do {
-            // TODO: - results 값이 비었다면 여기서 처리해야하나?
-            if let filter {
-                resetOccupied(with: filter)
-                fetchedAnimals = try await Actions.FetchAnimal(service: service,
-                                                                    filter: filter,
-                                                                    page: filterPage).excute().results
-                filterPage += 1
-            } else {
-                fetchedAnimals = try await Actions.FetchAnimal(service: service,
-                                                            filter: .example,
-                                                            page: page).excute().results
-                page += 1
-            }
-
-            let fetchedAnimalsSyncdByFavorite =  syncWithFavorites(fetchedAnimals)
-            animalDict[menu, default: []] += fetchedAnimalsSyncdByFavorite
-            isLoading = false
-            self.isLast = false
-        } catch let error {
-            if let httpError = error as? HTTPError {
-                switch httpError {
-                case .dataEmtpy(let message):
-                    await MainActor.run {
-                        self.isLast = true
-                    }
-                    dump(message)
-                default:
-                    dump(error.localizedDescription)
-                }
-            }
-
-            await MainActor.run {
-                self.isLoading = false
-                dump("Error fetching animals at \(#function) in \(#file)")
-            }
+            let (fetchedAnimals, isLastPage) = try await fetchAnimals(with: filter)
+            await updateUI(with: fetchedAnimals, isLast: isLastPage)
+        } catch {
+            await handleError(error)
         }
     }
 
+    private func fetchAnimals(with filter: AnimalFilter?) async throws -> ([Animal], Bool) {
+        resetOccupied(with: filter)
+        let activeFilter = filter ?? .example
+        let pageToFetch = filter != nil ? filterPage : page
+        let results = try await Actions
+            .FetchAnimal(service: service, filter: activeFilter, page: pageToFetch)
+            .execute().results
+
+        if filter != nil { filterPage += 1 } else { page += 1 }
+        return (syncWithFavorites(results), results.isEmpty)
+    }
+
+    @MainActor
+    private func updateUI(with animals: [Animal], isLast: Bool) {
+        animalDict[menu, default: []] += animals
+        isLoading = false
+        self.isLast = isLast
+    }
+
+    @MainActor
+    private func handleError(_ error: Error) {
+        isLoading = false
+        if let httpError = error as? HTTPError,
+           case .dataEmtpy(let message) = httpError {
+            self.isLast = true
+            dump(message)
+        } else {
+            dump("Error fetching animals at \(#function) in \(#file)")
+        }
+    }
 
     // 해당 동물의 isLiked 프로퍼티를 업데이트하고 이를 현재 선택된 menu의 동물 리스트와 업데이트함
     // TODO: - menu 별로 모든 동물 리스트와 업데이트 해야하는 함
@@ -135,7 +130,8 @@ final class FeedListReducer: ObservableObject {
     }
 
     // 기존에 들고 있던 필터와 새로 들어온 필터가 다르면 초기화
-    private func resetOccupied(with filter: AnimalFilter) {
+    private func resetOccupied(with filter: AnimalFilter?) {
+        guard let filter else { return }
         if self.selectedFilter != filter {
             self.animalDict[self.menu, default: []].removeAll()
             self.selectedFilter = filter

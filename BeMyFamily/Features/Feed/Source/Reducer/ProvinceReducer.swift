@@ -21,10 +21,10 @@ final class ProvinceReducer: ObservableObject {
 
         Task {
             do {
-                self.kind = try await Actions.FetchKind(service: service).excute(by: Upkind.allCases)
-                self.sido = try await Actions.FetchSido(service: service).excute().results
-                self.province = await Actions.FetchSigungu(service: service).excute(by: sido)
-                self.shelter = await Actions.FetchShelter(service: service).excute(by: province)
+                self.kind = try await Actions.FetchKind(service: service).execute(by: Upkind.allCases)
+                self.sido = try await Actions.FetchSido(service: service).execute().results
+                self.province = await Actions.FetchSigungu(service: service).execute(by: sido)
+                self.shelter = await Actions.FetchShelter(service: service).execute(by: province)
             } catch {
                 print("failed at fetching kind using by upkind")
             }
