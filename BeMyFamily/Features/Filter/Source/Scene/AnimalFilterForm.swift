@@ -11,6 +11,7 @@ struct AnimalFilterForm: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var reducer: FeedListReducer
     @EnvironmentObject var filterReducer: FilterReducer
+    @EnvironmentObject var provinceReducer: ProvinceReducer
     @State private var applyFilter = true
 
     var body: some View {
@@ -38,7 +39,7 @@ struct AnimalFilterForm: View {
 
                     if let upkind = filterReducer.upkind {
                         Picker("품종", selection: $filterReducer.kind) {
-                            let kinds = reducer.kind[upkind, default: []]
+                            let kinds = provinceReducer.kind[upkind, default: []]
                             Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Kind?)
 
@@ -55,7 +56,7 @@ struct AnimalFilterForm: View {
                         Text(UIConstants.FilterForm.showAll)
                             .tag(nil as Sido?)
 
-                        ForEach(reducer.sido, id: \.self) { eachSido in
+                        ForEach(provinceReducer.sido, id: \.self) { eachSido in
                             Text(eachSido.name)
                                 .tag(eachSido as Sido?)
                         }
@@ -66,7 +67,7 @@ struct AnimalFilterForm: View {
 
                     if let sido = filterReducer.sido {
                         Picker("시군구", selection: $filterReducer.sigungu) {
-                            let sigungus = reducer.province[sido, default: []]
+                            let sigungus = provinceReducer.province[sido, default: []]
                             Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Sigungu?)
 
@@ -89,7 +90,7 @@ struct AnimalFilterForm: View {
                             Text(UIConstants.FilterForm.showAll)
                                 .tag(nil as Shelter?)
 
-                            let shelter = reducer.shelter[sigungu, default: []]
+                            let shelter = provinceReducer.shelter[sigungu, default: []]
                             ForEach(shelter, id: \.self) { eachShelter in
                                 Text(eachShelter.name)
                                     .tag(eachShelter as Shelter?)
@@ -172,10 +173,12 @@ extension AnimalFilterForm {
 #Preview {
     @StateObject var reducer = FeedListReducer()
     @StateObject var filterReducer = FilterReducer()
+    @StateObject var provinceReducer = ProvinceReducer()
 
     return NavigationStack {
         AnimalFilterForm()
             .environmentObject(reducer)
             .environmentObject(filterReducer)
+            .environmentObject(provinceReducer)
     }
 }

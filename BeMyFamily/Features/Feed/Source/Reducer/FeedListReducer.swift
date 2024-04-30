@@ -8,16 +8,8 @@ import Foundation
 
 @Observable
 final class FeedListReducer: ObservableObject {
-    private let service = FriendSearchService()
+    private let service: FriendSearchService
 
-    // MARK: - before progress
-    // TODO: - 이것도 별도의 리듀서로 작업을 해야한다.
-    private(set) var kind = [Upkind: [Kind]]()
-    private(set) var sido = [Sido]()    // MAYBE: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
-    private(set) var province = [Sido: [Sigungu]]()
-    private(set) var shelter = [Sigungu: [Shelter]]()
-
-    // MARK: - in progress
     var menu = FriendMenu.feed
     // TODO: - 이 프로퍼티를 Filter 리듀서에 보내놔야한다.
     private(set) var selectedFilter: AnimalFilter?
@@ -28,20 +20,10 @@ final class FeedListReducer: ObservableObject {
     private(set) var filterPage = 1
     private var lastFetchTime: Date?
 
-    init() {
+    init(service: FriendSearchService = .init(session: .shared)) {
+        self.service = service
         // MARK: - Load Saved Animals from User Defaualts
         self.animalDict[FriendMenu.favorite] = loadSavedAnimals()
-
-        Task {
-            do {
-                self.kind = try await Actions.FetchKind(service: service).excute(by: Upkind.allCases)
-                self.sido = try await Actions.FetchSido(service: service).excute().results
-                self.province = await Actions.FetchSigungu(service: service).excute(by: sido)
-                self.shelter = await Actions.FetchShelter(service: service).excute(by: province)
-            } catch {
-                print("failed at fetching kind using by upkind")
-            }
-        }
     }
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시 + 쓰로틀링
