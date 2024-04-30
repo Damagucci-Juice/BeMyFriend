@@ -84,7 +84,6 @@ final class FeedListReducer: ObservableObject {
     }
 
     // 해당 동물의 isLiked 프로퍼티를 업데이트하고 이를 현재 선택된 menu의 동물 리스트와 업데이트함
-    // TODO: - menu 별로 모든 동물 리스트와 업데이트 해야하는 함
     public func updateFavorite(_ animal: Animal) {
         let selectedAnimalList = animalDict[menu, default: []]
         var likedAnimals = animalDict[FriendMenu.favorite, default: []]

@@ -109,35 +109,10 @@ struct AnimalDetailView: View {
     private var actionButtons: some View {
         HStack {
             Spacer()
-            // TODO: - 컴포넌트화 1
-            Button {
-                favoriteToggled(animal)
-            } label: {
-                Image(systemName: UIConstants.Image.heart)
-                    .resizable()
-                    .scaledToFill()
-                    .foregroundStyle(animal.isFavorite ? .red.opacity(UIConstants.Opacity.border) : .secondary)
-                    .frame(width: UIConstants.Frame.heartHeight,
-                           height: UIConstants.Frame.heartHeight)
-                    .overlay {
-                        Image(systemName: UIConstants.Image.heartWithStroke)
-                            .resizable()
-                            .scaledToFill()
-                            .foregroundStyle(animal.isFavorite ? .pink : .white.opacity(UIConstants.Opacity.border))
-                            .frame(width: UIConstants.Frame.heartBorderHeight,
-                                   height: UIConstants.Frame.heartBorderHeight)
-                    }
-            }
-            // TODO: - 컴포넌트화 2
-            ShareLink(item: renderedImage ?? Image(.bemyfamilyIconTrans),
-                      preview: SharePreview(Text(UIConstants.App.shareMessage),
-                                            image: Image(.bemyfamilyIconTrans)))
-            .labelStyle(.iconOnly)
-            .imageScale(.large)
-            .symbolVariant(.fill)
-            .tint(.secondary)
-            .disabled(hasImage)
 
+            LikeButton(animal: animal, favoriteToggled: favoriteToggled)
+
+            ShareButton(renderedImage: $renderedImage, hasImage: hasImage)
         }
         .padding(.vertical)
     }
