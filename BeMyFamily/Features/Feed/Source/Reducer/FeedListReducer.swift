@@ -113,7 +113,7 @@ final class FeedListReducer: ObservableObject {
     }
     // MARK: - swift concurrency with parrall End
 
-    // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시
+    // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시 + 쓰로틀링
     public func fetchAnimals(_ filter: AnimalFilter? = nil) async {
         let now = Date()
         let fetchIntervalSec = 0.3
@@ -127,6 +127,8 @@ final class FeedListReducer: ObservableObject {
         }
      }
 
+
+    // TODO: - 이 이 함수 20줄 안쪽으로 떨어지게 수정
     @MainActor
     private func performFetch(_ filter: AnimalFilter?) async {
         guard !isLoading else { return }
@@ -172,6 +174,9 @@ final class FeedListReducer: ObservableObject {
         }
     }
 
+
+    // 해당 동물의 isLiked 프로퍼티를 업데이트하고 이를 현재 선택된 menu의 동물 리스트와 업데이트함
+    // TODO: - menu 별로 모든 동물 리스트와 업데이트 해야하는 함
     public func updateFavorite(_ animal: Animal) {
         let selectedAnimalList = animalDict[menu, default: []]
         var likedAnimals = animalDict[FriendMenu.favorite, default: []]
