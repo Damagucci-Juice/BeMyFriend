@@ -34,84 +34,15 @@ final class FeedListReducer: ObservableObject {
 
         Task {
             do {
-                self.kind = try await fetchKind(by: Upkind.allCases)
+                self.kind = try await Actions.FetchKind(service: service).excute(by: Upkind.allCases)
                 self.sido = try await Actions.FetchSido(service: service).excute().results
-                self.province = await fetchSigungu(by: sido)
-                self.shelter = await fetchShelter(by: province)
+                self.province = await Actions.FetchSigungu(service: service).excute(by: sido)
+                self.shelter = await Actions.FetchShelter(service: service).excute(by: province)
             } catch {
                 print("failed at fetching kind using by upkind")
             }
         }
     }
-    // TODO: - 이 흐름이 Actions에 가야하지 않을까...?
-    // MARK: - swift concurrency with parrall Begin
-    private func fetchKind(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
-        try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
-            for upkind in upkinds {
-                group.addTask {
-                    let fetchedKind = try await Actions.FetchKind(service: self.service).excute(upkind.id).results
-                    return (upkind, fetchedKind)
-                }
-            }
-            var kinds = [Upkind: [Kind]]()
-
-            for try await (upkind, fetchedKind) in group {
-                kinds[upkind] = fetchedKind
-            }
-
-            return kinds
-        }
-    }
-
-    private func fetchSigungu(by sidos: [Sido]) async -> [Sido: [Sigungu]] {
-        await withTaskGroup(of: (Sido, [Sigungu]).self) { group in
-            for sido in sidos {
-                group.addTask {
-                    do {
-                        // swiftlint: disable line_length
-                        let fetchedSigungu = try await Actions.FetchSigungu(service: self.service).excute(sido.id).results
-                        // swiftlint: enable line_length
-                        return (sido, fetchedSigungu)
-                    } catch {
-                        NSLog("Error fetching Sigungu for \(sido.id): \(error)")
-                        return (sido, [])
-                    }
-                }
-            }
-
-            var sigungus = [Sido: [Sigungu]]()
-            for await (eachSido, fetchedSigungu) in group {
-                sigungus[eachSido] = fetchedSigungu
-            }
-            return sigungus
-        }
-    }
-
-    private func fetchShelter(by province: [Sido: [Sigungu]]) async -> [Sigungu: [Shelter]] {
-        await withTaskGroup(of: (Sigungu, [Shelter]).self) { group in
-            for (sido, sigungus) in province {
-                for eachSigungu in sigungus {
-                    group.addTask {
-                        do {
-                            // swiftlint: disable line_length
-                            let fetchedShelter = try await Actions.FetchShelter(service: self.service).excute(sido.id, eachSigungu.id).results
-                            // swiftlint: enable line_length
-                            return (eachSigungu, fetchedShelter)
-                        } catch {
-                            NSLog("Error fetching Shelter for \(sido.id): \(error)")
-                            return (eachSigungu, [])
-                        }
-                    }
-                }
-            }
-            var shelters = [Sigungu: [Shelter]]()
-            for await (eachSigungu, fetchedShelter) in group {
-                shelters[eachSigungu] = fetchedShelter
-            }
-            return shelters
-        }
-    }
-    // MARK: - swift concurrency with parrall End
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시 + 쓰로틀링
     public func fetchAnimals(_ filter: AnimalFilter? = nil) async {

@@ -12,7 +12,7 @@ struct Actions {
     struct FetchSido: AsyncAction {
         let service: FriendSearchService
 
-        func excute() async throws -> PaginatedResponse<Sido> {
+        public func excute() async throws -> PaginatedResponse<Sido> {
             if let fetched = try await service.search(.sido) {
                 do {
                     let sidoResponse = try JSONDecoder().decode(PaginatedAPIResponse<Sido>.self, from: fetched)
@@ -32,7 +32,7 @@ struct Actions {
     struct FetchSigungu: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ sidoCode: String) async throws -> Response<Sigungu> {
+        private func excute(_ sidoCode: String) async throws -> Response<Sigungu> {
             if let fetched = try await service.search(.sigungu(sido: sidoCode)) {
                 do {
                     let sigunguResponse = try JSONDecoder().decode(APIResponse<Sigungu>.self, from: fetched)
@@ -44,12 +44,34 @@ struct Actions {
             }
             throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
+
+        public func excute(by sidos: [Sido]) async -> [Sido: [Sigungu]] {
+            await withTaskGroup(of: (Sido, [Sigungu]).self) { group in
+                for sido in sidos {
+                    group.addTask {
+                        do {
+                            let fetchedSigungu = try await excute(sido.id).results
+                            return (sido, fetchedSigungu)
+                        } catch {
+                            NSLog("Error fetching Sigungu for \(sido.id): \(error)")
+                            return (sido, [])
+                        }
+                    }
+                }
+
+                var sigungus = [Sido: [Sigungu]]()
+                for await (eachSido, fetchedSigungu) in group {
+                    sigungus[eachSido] = fetchedSigungu
+                }
+                return sigungus
+            }
+        }
     }
 
     struct FetchShelter: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ sidoCode: String, _ sigunguCode: String) async throws -> Response<Shelter> {
+        private func excute(_ sidoCode: String, _ sigunguCode: String) async throws -> Response<Shelter> {
             if let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode)) {
                 do {
                     let shelterResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
@@ -61,12 +83,35 @@ struct Actions {
             }
             throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
+
+        public func excute(by province: [Sido: [Sigungu]]) async -> [Sigungu: [Shelter]] {
+            await withTaskGroup(of: (Sigungu, [Shelter]).self) { group in
+                for (sido, sigungus) in province {
+                    for eachSigungu in sigungus {
+                        group.addTask {
+                            do {
+                                let fetchedShelter = try await excute(sido.id, eachSigungu.id).results
+                                return (eachSigungu, fetchedShelter)
+                            } catch {
+                                NSLog("Error fetching Shelter for \(sido.id): \(error)")
+                                return (eachSigungu, [])
+                            }
+                        }
+                    }
+                }
+                var shelters = [Sigungu: [Shelter]]()
+                for await (eachSigungu, fetchedShelter) in group {
+                    shelters[eachSigungu] = fetchedShelter
+                }
+                return shelters
+            }
+        }
     }
 
     struct FetchKind: AsyncAction {
         let service: FriendSearchService
 
-        func excute(_ upkindCode: String) async throws -> Response<Kind> {
+        private func excute(_ upkindCode: String) async throws -> Response<Kind> {
             if let fetched = try await service.search(.kind(upkind: upkindCode)) {
                 do {
                     let sigunguResponse = try JSONDecoder().decode(APIResponse<Kind>.self, from: fetched)
@@ -78,6 +123,24 @@ struct Actions {
             }
             throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
+
+        public func excute(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
+            try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
+                for upkind in upkinds {
+                    group.addTask {
+                        let fetchedKind = try await excute(upkind.id).results
+                        return (upkind, fetchedKind)
+                    }
+                }
+                var kinds = [Upkind: [Kind]]()
+
+                for try await (upkind, fetchedKind) in group {
+                    kinds[upkind] = fetchedKind
+                }
+
+                return kinds
+            }
+        }
     }
 
     struct FetchAnimal: AsyncAction {
@@ -85,7 +148,7 @@ struct Actions {
         let filter: AnimalFilter
         let page: Int
 
-        func excute() async throws -> PaginatedResponse<Animal> {
+        public func excute() async throws -> PaginatedResponse<Animal> {
             guard let fetched = try await service.search(.animal(filteredItem: filter, page: page)) else {
                 throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
             }
