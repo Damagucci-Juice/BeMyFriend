@@ -11,7 +11,7 @@ final class FeedListReducer: ObservableObject {
     private let service: FriendSearchService
 
     var menu = FriendMenu.feed
-    private(set) var selectedFilter: AnimalFilter?
+    private(set) var selectedFilter: [AnimalFilter] = [.example]
     private(set) var filterPage = 1
 
     private(set) var animalDict = [FriendMenu: [Animal]]()
@@ -27,7 +27,7 @@ final class FeedListReducer: ObservableObject {
     }
 
     // 이미 실행을 보낸 작업이 있다면 취소하고 새로운 작업을 지시 + 쓰로틀링
-    public func fetchAnimalsIfCan(_ filter: AnimalFilter? = nil) async {
+    public func fetchAnimalsIfCan(_ filters: [AnimalFilter] = [.example]) async {
         let now = Date()
         let fetchIntervalSec = 0.3
         guard lastFetchTime == nil || now.timeIntervalSince(lastFetchTime!) > fetchIntervalSec else {
@@ -36,11 +36,53 @@ final class FeedListReducer: ObservableObject {
         lastFetchTime = now
 
         Task {
-            await performFetch(filter)
+            await fetchMultiKindsAnimals(filters)
         }
      }
 
-    private func performFetch(_ filter: AnimalFilter?) async {
+    // TODO: - 리펙터링 해야함
+    private func fetchMultiKindsAnimals(_ filters: [AnimalFilter]) async {
+        guard !isLoading else { return }
+            isLoading = true
+
+        // 필터가 이전과 다르면 초기화하고 새로 설정
+        resetOccupied(filters)
+
+        // Create a task group to fetch animals for all filters concurrently
+        let results = await withTaskGroup(of: (AnimalFilter, [Animal]).self) { group in
+            for filter in filters {
+                group.addTask {
+                    do {
+                        let (animals, isLast) = try await self.fetchAnimals(with: filter)
+                        return (filter, animals)
+                    } catch {
+                        return (filter, [])
+                    }
+                }
+            }
+
+            var aggregatedResults = [AnimalFilter: [Animal]]()
+            for await (filter, animals) in group {
+                if !animals.isEmpty {
+                    aggregatedResults[filter, default: []].append(contentsOf: animals)
+                }
+            }
+            return aggregatedResults
+        }
+
+        // Update the UI on the main actor thread
+        await MainActor.run {
+
+            for (filter, animals) in results {
+                animalDict[self.menu, default: []] += syncWithFavorites(animals)
+            }
+            if self.menu == .filter { filterPage += 1 } else { page += 1 }
+            isLoading = false
+        }
+    }
+
+    /*
+    private func performFetch(_ filter: AnimalFilter) async {
         guard !isLoading else { return }
         isLoading = true
 
@@ -51,19 +93,16 @@ final class FeedListReducer: ObservableObject {
             await handleError(error)
         }
     }
-
-    private func fetchAnimals(with filter: AnimalFilter?) async throws -> ([Animal], Bool) {
-        resetOccupied(with: filter)
-        let activeFilter = filter ?? .example
-        let pageToFetch = filter != nil ? filterPage : page
+*/
+    private func fetchAnimals(with filter: AnimalFilter) async throws -> ([Animal], Bool) {
+        let pageToFetch = self.menu == .feed ? page : filterPage
         let results = try await Actions
-            .FetchAnimal(service: service, filter: activeFilter, page: pageToFetch)
+            .FetchAnimal(service: service, filter: filter, page: pageToFetch)
             .execute().results
-
-        if filter != nil { filterPage += 1 } else { page += 1 }
         return (syncWithFavorites(results), results.isEmpty)
     }
 
+    /*
     @MainActor
     private func updateUI(with animals: [Animal], isLast: Bool) {
         animalDict[menu, default: []] += animals
@@ -82,7 +121,7 @@ final class FeedListReducer: ObservableObject {
             dump("Error fetching animals at \(#function) in \(#file)")
         }
     }
-
+*/
     // 해당 동물의 isLiked 프로퍼티를 업데이트하고 이를 현재 선택된 menu의 동물 리스트와 업데이트함
     public func updateFavorite(_ animal: Animal) {
         let selectedAnimalList = animalDict[menu, default: []]
@@ -129,12 +168,11 @@ final class FeedListReducer: ObservableObject {
     }
 
     // 기존에 들고 있던 필터와 새로 들어온 필터가 다르면 초기화
-    private func resetOccupied(with filter: AnimalFilter?) {
-        guard let filter else { return }
-        if self.selectedFilter != filter {
-            self.animalDict[self.menu, default: []].removeAll()
-            self.selectedFilter = filter
-            self.filterPage = 1
+    private func resetOccupied(_ filter: [AnimalFilter]) {
+        if selectedFilter != filter {
+            animalDict[.filter, default: []].removeAll()
+            selectedFilter = filter
+            filterPage = 1
         }
     }
 

@@ -31,7 +31,7 @@ struct CardNewView: View {
         VStack(alignment: .leading, spacing: 8) {
             Group {
                 detailRow(label: "특이사항:", value: animal.specialMark)
-                detailRow(label: "실종일:", value: animal.happenDt)
+                detailRow(label: "접수일:", value: animal.happenDt)
                 detailRow(label: "발견장소:", value: animal.happenPlace)
                 detailRow(label: "품종:", value: animal.kindCD)
                 detailRow(label: "색:", value: animal.colorCD)

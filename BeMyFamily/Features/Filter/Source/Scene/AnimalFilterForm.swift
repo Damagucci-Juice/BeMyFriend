@@ -38,14 +38,45 @@ struct AnimalFilterForm: View {
                     }
 
                     if let upkind = filterReducer.upkind {
-                        Picker("품종", selection: $filterReducer.kind) {
-                            let kinds = provinceReducer.kind[upkind, default: []]
-                            Text(UIConstants.FilterForm.showAll)
-                                .tag(nil as Kind?)
+//                        Picker("품종", selection: $filterReducer.kinds) {
+//                            let kinds = provinceReducer.kind[upkind, default: []]
+////                            Text(UIConstants.FilterForm.showAll)
+////                                .tag([] as Kind)
+//
+//                            ForEach(kinds, id: \.self) { eachKind in
+//                                Text(eachKind.name)
+//                                    .tag(eachKind as Kind)
+//                            }
+//                        }
 
-                            ForEach(kinds, id: \.self) { eachKind in
-                                Text(eachKind.name)
-                                    .tag(eachKind as Kind?)
+                        // MARK: - 비면 모든 품종을 부름,
+                        let kinds = filterReducer.kinds
+
+                        Group {
+                            Text("선택된 품종")
+                            ForEach(kinds) { kind in
+                                Text(kind.name)
+                            }
+                        }
+
+                        Group {
+                            Text("선택가능한 품종")
+
+                            Text(UIConstants.FilterForm.showAll)
+                                .tag([] as [Kind])
+
+                            ForEach(provinceReducer.kind[upkind, default: []]) { kind in
+                                Button {
+                                    if filterReducer.kinds.contains(kind) {
+                                        guard let removed = filterReducer.kinds.firstIndex(of: kind)
+                                        else { return }
+                                        filterReducer.kinds.remove(at: removed)
+                                    } else {
+                                        filterReducer.kinds.append(kind)
+                                    }
+                                } label: {
+                                    Text(kind.name)
+                                }
                             }
                         }
                     }
@@ -165,8 +196,8 @@ struct AnimalFilterForm: View {
 
 extension AnimalFilterForm {
     func fetchAnimalsWithFilter() async {
-        let filter = filterReducer.makeFilter()
-        await reducer.fetchAnimalsIfCan(filter)
+        let filters = filterReducer.makeFilter()
+        await reducer.fetchAnimalsIfCan(filters)
     }
 }
 
