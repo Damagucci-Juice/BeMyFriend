@@ -30,7 +30,7 @@ final class FilterReducer: ObservableObject {
             AnimalFilter(beginDate: beginDate,
                                 endDate: endDate,
                                 upkind: upkind?.id,
-                                kind: kind.id,
+                                kind: kind,
                                 sido: sido?.id,
                                 sigungu: sigungu?.id,
                                 shelterNumber: shelter?.id,
