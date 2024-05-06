@@ -42,7 +42,7 @@ extension TabControlView {
 }
 
 #Preview {
-    @StateObject var reducer = FeedListReducer()
+    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
 
     return TabControlView()
         .environmentObject(reducer)

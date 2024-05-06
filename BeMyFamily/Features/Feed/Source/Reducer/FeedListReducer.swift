@@ -4,16 +4,17 @@
 //
 //  Created by Gucci on 4/19/24.
 //
-import Foundation
+import SwiftUI
 
 @Observable
 final class FeedListReducer: ObservableObject {
     private let service: FriendSearchService
+    private let filterReducer: FilterReducer
 
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
     private(set) var filterPage = 1
-    private(set) var emptyFilter: AnimalFilter? = nil
+//    private(set) var emptyFilter: AnimalFilter? = nil
 
     private(set) var animalDict = [FriendMenu: [Animal]]()
     private(set) var isLoading = false
@@ -21,8 +22,9 @@ final class FeedListReducer: ObservableObject {
     private(set) var page = 1
     private var lastFetchTime: Date?
 
-    init(service: FriendSearchService = .init(session: .shared)) {
+    init(service: FriendSearchService = .init(session: .shared), filterReducer: FilterReducer) {
         self.service = service
+        self.filterReducer = filterReducer
         // MARK: - Load Saved Animals from User Defaualts
         self.animalDict[FriendMenu.favorite] = loadSavedAnimals()
     }
@@ -41,12 +43,12 @@ final class FeedListReducer: ObservableObject {
         }
      }
 
-    @MainActor
-    public func resetFilterSocket() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
-            self.emptyFilter = nil
-        }
-    }
+//    @MainActor
+//    public func resetFilterSocket() {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
+//            self.emptyFilter = nil
+//        }
+//    }
 
     // TODO: - 리펙터링 해야함
     private func fetchMultiKindsAnimals(_ filters: [AnimalFilter]) async {
@@ -93,7 +95,7 @@ final class FeedListReducer: ObservableObject {
                 if let index = selectedFilter.firstIndex(of: filter) {
                     let removedFilter = selectedFilter.remove(at: index)
                     DispatchQueue.main.asyncAfter(deadline: .now() + updateThrottling) {
-                        self.emptyFilter = removedFilter
+                        self.filterReducer.updateEmptyReulst(with: filter)
                     }
                     updateThrottling += 1.0
                 }

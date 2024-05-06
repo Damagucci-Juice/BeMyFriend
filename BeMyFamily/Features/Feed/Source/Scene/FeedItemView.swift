@@ -79,7 +79,7 @@ struct FeedItemView: View {
 extension FeedItemView: Sharable { }
 
 #Preview {
-    @StateObject var reducer = FeedListReducer()
+    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
     let animals = ModelData().animals.items
 
     return ScrollView {

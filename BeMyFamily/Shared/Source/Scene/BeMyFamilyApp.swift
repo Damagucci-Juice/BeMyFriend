@@ -9,16 +9,23 @@ import SwiftUI
 
 @main
 struct BeMyFamilyApp: App {
-    @StateObject private var reducer = FeedListReducer()
-    @StateObject private var filterReducer = FilterReducer()
-    @StateObject private var provinceReducer = ProvinceReducer()
+    @StateObject private var filterReducer: FilterReducer
+    @StateObject private var reducer: FeedListReducer
+    @StateObject private var provinceReducer: ProvinceReducer
+
+    init() {
+        let filterReducer = DIContainer.makeFilterReducer()
+        _filterReducer = StateObject(wrappedValue: filterReducer)
+        _reducer = StateObject(wrappedValue: DIContainer.makeFeedListReducer(filterReducer))
+        _provinceReducer = StateObject(wrappedValue: DIContainer.makeProvinceReducer())
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(reducer)
                 .environmentObject(filterReducer)
                 .environmentObject(provinceReducer)
+                .environmentObject(reducer)
                 .preferredColorScheme(.dark)
         }
     }

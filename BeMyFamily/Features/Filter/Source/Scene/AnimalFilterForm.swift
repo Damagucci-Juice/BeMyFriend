@@ -202,14 +202,12 @@ extension AnimalFilterForm {
 }
 
 #Preview {
-    @StateObject var reducer = FeedListReducer()
-    @StateObject var filterReducer = FilterReducer()
-    @StateObject var provinceReducer = ProvinceReducer()
+    @StateObject var filterReducer = DIContainer.makeFilterReducer()
 
     return NavigationStack {
         AnimalFilterForm()
-            .environmentObject(reducer)
             .environmentObject(filterReducer)
-            .environmentObject(provinceReducer)
+            .environmentObject(DIContainer.makeFeedListReducer(filterReducer))
+            .environmentObject(DIContainer.makeProvinceReducer())
     }
 }

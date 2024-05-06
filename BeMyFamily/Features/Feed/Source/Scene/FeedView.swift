@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject var reducer: FeedListReducer
+    @EnvironmentObject var filterReducer: FilterReducer
     @State private var showfilter = false
     @State private var alertKind = "해당"
 
@@ -39,14 +40,14 @@ struct FeedView: View {
             }
         }
         // MARK: - 빈 필터값이 업데이트이 되면 알리는 로직
-        .onChange(of: reducer.emptyFilter) { _, new in
-            if let new {
-                self.alertKind = new.kind?.name ?? "해당"
-                withAnimation {
-                    reducer.resetFilterSocket()
-                }
-            }
-        }
+//        .onChange(of: reducer.emptyFilter) { _, new in
+//            if let new {
+//                self.alertKind = new.kind?.name ?? "해당"
+//                withAnimation {
+//                    reducer.resetFilterSocket()
+//                }
+//            }
+//        }
         // MARK: - 스크롤의 밑 부분에 도달하면 새로운 동물 데이터를 팻치해오는 로직
         .background {
             GeometryReader { proxy -> Color in
@@ -90,19 +91,23 @@ struct FeedView: View {
     private var toggleMessage: some View {
         if reducer.animalDict.isEmpty || reducer.isLoading {
             ProgressView()
-        } else if reducer.emptyFilter != nil {
-            Capsule(style: .continuous)
-                .fill(.gray)
-                .frame(width: 250, height: 50)
-                .overlay {
-                    Text("\(alertKind) 공고가 없습니다.")
+        } else if !filterReducer.emptyResultFilters.isEmpty {
+            VStack {
+                ForEach(filterReducer.emptyResultFilters, id: \.self) { emptyFilter in
+                    Capsule(style: .continuous)
+                        .fill(.gray)
+                        .frame(width: 250, height: 50)
+                        .overlay {
+                            Text("\(String(describing: emptyFilter.kind?.name ?? "더 이상")) 공고가 없습니다.")
+                        }
                 }
+            }
         }
     }
 }
 
 #Preview {
-    @StateObject var reducer = FeedListReducer()
+    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
 
     return FeedView()
         .environmentObject(reducer)

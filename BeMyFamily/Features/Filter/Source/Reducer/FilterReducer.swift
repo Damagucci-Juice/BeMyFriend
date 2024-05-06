@@ -15,7 +15,7 @@ final class FilterReducer: ObservableObject {
         self.kinds = []
     }
     private(set) var onProcessing = false
-
+    private(set) var emptyResultFilters = [AnimalFilter]()
 
     var beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10) // 10일 전
     var endDate = Date()
@@ -56,6 +56,7 @@ final class FilterReducer: ObservableObject {
 
     func reset() {
         onProcessing = false
+        emptyResultFilters.removeAll()
 
         beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10)
         endDate = Date()
@@ -66,5 +67,9 @@ final class FilterReducer: ObservableObject {
         shelter = .none
         state = .all
         neutral = .none
+    }
+
+    func updateEmptyReulst(with filter: AnimalFilter) {
+        self.emptyResultFilters.append(filter)
     }
 }
