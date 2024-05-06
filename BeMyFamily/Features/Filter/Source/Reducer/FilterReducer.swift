@@ -26,18 +26,29 @@ final class FilterReducer: ObservableObject {
     var neutral: Neutralization?
 
     func makeFilter() -> [AnimalFilter] {
-        kinds.map { kind in
-            AnimalFilter(beginDate: beginDate,
-                                endDate: endDate,
-                                upkind: upkind?.id,
-                                kind: kind,
-                                sido: sido?.id,
-                                sigungu: sigungu?.id,
-                                shelterNumber: shelter?.id,
-                                processState: state.id,
-                                neutralizationState: neutral?.id)
+        let baseFilter = AnimalFilter(
+            beginDate: beginDate,
+            endDate: endDate,
+            upkind: upkind?.id,
+            kind: nil,
+            sido: sido?.id,
+            sigungu: sigungu?.id,
+            shelterNumber: shelter?.id,
+            processState: state.id,
+            neutralizationState: neutral?.id
+        )
+
+        if kinds.isEmpty {
+            return [baseFilter]
+        } else {
+            return kinds.map { kind in
+                var filter = baseFilter
+                filter.kind = kind
+                return filter
+            }
         }
     }
+
 
     func reset() {
         beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10)
