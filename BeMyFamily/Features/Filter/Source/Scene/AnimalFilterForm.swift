@@ -183,7 +183,6 @@ struct AnimalFilterForm: View {
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        reducer.setMenu(.feed)
                         dismiss()
                     } label: {
                         Text("Cancel")

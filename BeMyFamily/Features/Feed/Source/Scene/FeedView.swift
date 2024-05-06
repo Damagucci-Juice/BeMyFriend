@@ -12,7 +12,8 @@ struct FeedView: View {
     @EnvironmentObject var filterReducer: FilterReducer
     @State private var showfilter = false
     @State private var alertKind = "해당"
-
+    @State private var isReachedToBottom = false
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
@@ -20,7 +21,9 @@ struct FeedView: View {
                     feedList
                 }
 
-                toggleMessage
+                if isReachedToBottom && reducer.menu != .favorite {
+                    toggleMessage
+                }
             }
             .navigationTitle(reducer.menu.title)
         }
@@ -39,21 +42,13 @@ struct FeedView: View {
                 .tint(.primary)
             }
         }
-        // MARK: - 빈 필터값이 업데이트이 되면 알리는 로직
-//        .onChange(of: reducer.emptyFilter) { _, new in
-//            if let new {
-//                self.alertKind = new.kind?.name ?? "해당"
-//                withAnimation {
-//                    reducer.resetFilterSocket()
-//                }
-//            }
-//        }
         // MARK: - 스크롤의 밑 부분에 도달하면 새로운 동물 데이터를 팻치해오는 로직
         .background {
             GeometryReader { proxy -> Color in
                 let maxY = proxy.frame(in: .global).maxY
                 let throttle = 150.0
                 let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
+                self.isReachedToBottom = reachedToBottom
                 if reachedToBottom && !reducer.isLoading && !reducer.isLast {
                     //  피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
                     Task {

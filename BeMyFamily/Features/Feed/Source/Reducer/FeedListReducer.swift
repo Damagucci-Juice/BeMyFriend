@@ -14,7 +14,6 @@ final class FeedListReducer: ObservableObject {
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
     private(set) var filterPage = 1
-//    private(set) var emptyFilter: AnimalFilter? = nil
 
     private(set) var animalDict = [FriendMenu: [Animal]]()
     private(set) var isLoading = false
@@ -42,13 +41,6 @@ final class FeedListReducer: ObservableObject {
             await fetchMultiKindsAnimals(filters)
         }
      }
-
-//    @MainActor
-//    public func resetFilterSocket() {
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
-//            self.emptyFilter = nil
-//        }
-//    }
 
     // TODO: - 리펙터링 해야함
     private func fetchMultiKindsAnimals(_ filters: [AnimalFilter]) async {
@@ -87,17 +79,13 @@ final class FeedListReducer: ObservableObject {
     /// 추후 emptyFilter는 토글로써 쓰임
     @MainActor
     private func updateUI(_ results: [AnimalFilter: [Animal]]) {
-        var updateThrottling = 1.0
         for (filter, animals) in results {
             if animals.isEmpty {
                 /// filter가 빈 값을 내보내면 selectedFilter에서 제거
                 /// 빈 값을 가지고 있다면 "더이상 정보 해당 견종의 정보가 없다"고 알림
                 if let index = selectedFilter.firstIndex(of: filter) {
                     let removedFilter = selectedFilter.remove(at: index)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + updateThrottling) {
-                        self.filterReducer.updateEmptyReulst(with: filter)
-                    }
-                    updateThrottling += 1.0
+                    self.filterReducer.updateEmptyReulst(with: removedFilter)
                 }
             } else {
                 animalDict[self.menu, default: []] += syncWithFavorites(animals)
