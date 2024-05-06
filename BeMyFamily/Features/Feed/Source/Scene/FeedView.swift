@@ -10,62 +10,93 @@ import SwiftUI
 struct FeedView: View {
     @EnvironmentObject var reducer: FeedListReducer
     @State private var showfilter = false
+    @State private var alertKind = "해당"
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: UIConstants.Spacing.interFeedItem) {
-                    ForEach(reducer.animalDict[
-                        reducer.menu, default: []]) { animal in
-                        NavigationLink {
-                            AnimalDetailView(animal: animal, favoriteToggled: reducer.updateFavorite)
-                        } label: {
-                            FeedItemView(animal: animal, favoriteToggled: reducer.updateFavorite)
-                        }
-                        .tint(.primary)
-                    }
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    feedList
+                }
 
-                    if reducer.animalDict.isEmpty || reducer.isLoading {
-                        ProgressView()
-                    } else if reducer.isLast {
-                        Text("공고가 없습니다.")
-                    }
-                }
-                // MARK: - Fetch Animals when reached Bottom
-                .background(GeometryReader { proxy -> Color in
-                    let maxY = proxy.frame(in: .global).maxY
-                    let throttle = 150.0
-                    let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
-                    if reachedToBottom && !reducer.isLoading && !reducer.isLast {
-                        // MARK: - 피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
-                        Task {
-                            switch reducer.menu {
-                            case .feed:
-                                await reducer.fetchAnimalsIfCan()
-                            case .filter:
-                                await reducer.fetchAnimalsIfCan(reducer.selectedFilter)
-                            case .favorite:
-                                // No action needed for favorite
-                                break
-                            }
-                        }
-                    }
-                    return Color.clear
-                })
-                .fullScreenCover(isPresented: $showfilter) {
-                    AnimalFilterForm()
-                }
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button {
-                            showfilter.toggle()
-                        } label: {
-                            Image(systemName: UIConstants.Image.filter)
-                        }
-                    }
-                }
+                toggleMessage
             }
             .navigationTitle(reducer.menu.title)
+        }
+    }
+
+    @ViewBuilder
+    private var feedList: some View {
+        VStack(spacing: UIConstants.Spacing.interFeedItem) {
+            ForEach(reducer.animalDict[
+                reducer.menu, default: []]) { animal in
+                NavigationLink {
+                    AnimalDetailView(animal: animal, favoriteToggled: reducer.updateFavorite)
+                } label: {
+                    FeedItemView(animal: animal, favoriteToggled: reducer.updateFavorite)
+                }
+                .tint(.primary)
+            }
+        }
+        // MARK: - 빈 필터값이 업데이트이 되면 알리는 로직
+        .onChange(of: reducer.emptyFilter) { _, new in
+            if let new {
+                self.alertKind = new.kind?.name ?? "해당"
+                withAnimation {
+                    reducer.resetFilterSocket()
+                }
+            }
+        }
+        // MARK: - 스크롤의 밑 부분에 도달하면 새로운 동물 데이터를 팻치해오는 로직
+        .background {
+            GeometryReader { proxy -> Color in
+                let maxY = proxy.frame(in: .global).maxY
+                let throttle = 150.0
+                let reachedToBottom = maxY < UIConstants.Frame.screenHeight + throttle
+                if reachedToBottom && !reducer.isLoading && !reducer.isLast {
+                    //  피드라면 example을 호출하고, Filter라면 최근 Filter를 호출
+                    Task {
+                        switch reducer.menu {
+                        case .feed:
+                            await reducer.fetchAnimalsIfCan()
+                        case .filter:
+                            // TODO: - 캡슐화 위반.. 뭔지 어떻게 알아야하는 것인가? 차라리 현재 선택된 메뉴를 넘기는게 맞아보인다.
+                            await reducer.fetchAnimalsIfCan(reducer.selectedFilter)
+                        case .favorite:
+                            // No action needed for favorite
+                            break
+                        }
+                    }
+                }
+                return Color.clear
+            }        
+        }
+        .fullScreenCover(isPresented: $showfilter) {
+            AnimalFilterForm()
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showfilter.toggle()
+                } label: {
+                    Image(systemName: UIConstants.Image.filter)
+                }
+            }
+        }
+    }
+
+    // MARK: - 로딩이나 빈 공고를 알려주는 토글 메시지
+    @ViewBuilder
+    private var toggleMessage: some View {
+        if reducer.animalDict.isEmpty || reducer.isLoading {
+            ProgressView()
+        } else if reducer.emptyFilter != nil {
+            Capsule(style: .continuous)
+                .fill(.gray)
+                .frame(width: 250, height: 50)
+                .overlay {
+                    Text("\(alertKind) 공고가 없습니다.")
+                }
         }
     }
 }
