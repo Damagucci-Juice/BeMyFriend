@@ -17,6 +17,23 @@ struct AnimalFilterForm: View {
     var body: some View {
         NavigationStack {
             Form {
+                Button {
+                    reducer.setMenu(.feed)
+                    filterReducer.reset()
+                    Task {
+                        let sleepTimeNanoSec: UInt64 = 500 * 1_000_000
+                        try? await Task.sleep(nanoseconds: sleepTimeNanoSec)
+
+                        await MainActor.run { dismiss() }
+                    }
+                } label: {
+                    Label {
+                        Text("필터 초기화")
+                    } icon: {
+                        Image(systemName: UIConstants.Image.reset)
+                    }
+                }
+
                 Section(header: Text("검색 일자")) {
                     DatePicker("시작일", selection: $filterReducer.beginDate,
                                in: ...filterReducer.endDate.addingTimeInterval(UIConstants.Date.aDayBefore),
@@ -149,33 +166,16 @@ struct AnimalFilterForm: View {
                         }
                     }
                 }
-
-                Button {
-                    reducer.setMenu(.feed)
-                    filterReducer.reset()
-                    Task {
-                        let sleepTimeNanoSec: UInt64 = 500 * 1_000_000
-                        try? await Task.sleep(nanoseconds: sleepTimeNanoSec)
-
-                        await MainActor.run { dismiss() }
-                    }
-                } label: {
-                    Label {
-                        Text("필터 초기화")
-                    } icon: {
-                        Image(systemName: UIConstants.Image.reset)
-                    }
-                }
             }
             .navigationTitle(UIConstants.FilterForm.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
+                        reducer.setMenu(.filter)
                         Task {
                             await fetchAnimalsWithFilter()
                         }
-                        reducer.setMenu(.filter)
                         dismiss()
                     } label: {
                         Text("Done")
