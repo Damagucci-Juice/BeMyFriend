@@ -14,6 +14,8 @@ final class FilterReducer: ObservableObject {
         self.service = service
         self.kinds = []
     }
+    private(set) var onProcessing = false
+
 
     var beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10) // 10일 전
     var endDate = Date()
@@ -26,6 +28,8 @@ final class FilterReducer: ObservableObject {
     var neutral: Neutralization?
 
     func makeFilter() -> [AnimalFilter] {
+        onProcessing = true
+
         let baseFilter = AnimalFilter(
             beginDate: beginDate,
             endDate: endDate,
@@ -51,6 +55,8 @@ final class FilterReducer: ObservableObject {
 
 
     func reset() {
+        onProcessing = false
+
         beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10)
         endDate = Date()
         upkind = .none
