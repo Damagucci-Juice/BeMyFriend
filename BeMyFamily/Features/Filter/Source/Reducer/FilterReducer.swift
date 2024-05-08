@@ -29,6 +29,7 @@ final class FilterReducer: ObservableObject {
 
     func makeFilter() -> [AnimalFilter] {
         onProcessing = true
+        emptyResultFilters.removeAll()
 
         let baseFilter = AnimalFilter(
             beginDate: beginDate,
