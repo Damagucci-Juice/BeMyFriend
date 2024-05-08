@@ -12,7 +12,6 @@ struct AnimalFilterForm: View {
     @EnvironmentObject var reducer: FeedListReducer
     @EnvironmentObject var filterReducer: FilterReducer
     @EnvironmentObject var provinceReducer: ProvinceReducer
-    @State private var applyFilter = true
 
     var body: some View {
         NavigationStack {
@@ -41,62 +40,6 @@ struct AnimalFilterForm: View {
                     DatePicker("종료일", selection: $filterReducer.endDate,
                                in: ...Date(),
                                displayedComponents: .date)
-                }
-
-                Section("어떤 종을 보고 싶으신가요?") {
-                    Picker("축종", selection: $filterReducer.upkind) {
-                        Text(UIConstants.FilterForm.showAll)
-                            .tag(nil as Upkind?)
-
-                        ForEach(Upkind.allCases, id: \.self) { upkind in
-                            Text(upkind.text)
-                                .tag(upkind as Upkind?)
-                        }
-                    }
-
-                    if let upkind = filterReducer.upkind {
-//                        Picker("품종", selection: $filterReducer.kinds) {
-//                            let kinds = provinceReducer.kind[upkind, default: []]
-////                            Text(UIConstants.FilterForm.showAll)
-////                                .tag([] as Kind)
-//
-//                            ForEach(kinds, id: \.self) { eachKind in
-//                                Text(eachKind.name)
-//                                    .tag(eachKind as Kind)
-//                            }
-//                        }
-
-                        // MARK: - 비면 모든 품종을 부름,
-                        let kinds = filterReducer.kinds
-
-                        Group {
-                            Text("선택된 품종")
-                            ForEach(kinds) { kind in
-                                Text(kind.name)
-                            }
-                        }
-
-                        Group {
-                            Text("선택가능한 품종")
-
-                            Text(UIConstants.FilterForm.showAll)
-                                .tag([] as [Kind])
-
-                            ForEach(provinceReducer.kind[upkind, default: []]) { kind in
-                                Button {
-                                    if filterReducer.kinds.contains(kind) {
-                                        guard let removed = filterReducer.kinds.firstIndex(of: kind)
-                                        else { return }
-                                        filterReducer.kinds.remove(at: removed)
-                                    } else {
-                                        filterReducer.kinds.append(kind)
-                                    }
-                                } label: {
-                                    Text(kind.name)
-                                }
-                            }
-                        }
-                    }
                 }
 
                 Section("지역을 골라주세요") {
@@ -166,6 +109,8 @@ struct AnimalFilterForm: View {
                         }
                     }
                 }
+
+                kindSection
             }
             .navigationTitle(UIConstants.FilterForm.title)
             .navigationBarTitleDisplayMode(.inline)
@@ -189,6 +134,55 @@ struct AnimalFilterForm: View {
                     }
                 }
             }
+        }
+    }
+}
+
+extension AnimalFilterForm {
+
+    @ViewBuilder
+    private var kindSection: some View {
+        Section("어떤 종을 보고 싶으신가요?") {
+            Picker("축종", selection: $filterReducer.upkind) {
+                Text(UIConstants.FilterForm.showAll)
+                    .tag(nil as Upkind?)
+
+                ForEach(Upkind.allCases, id: \.self) { upkind in
+                    Text(upkind.text)
+                        .tag(upkind as Upkind?)
+                }
+            }
+            // 예: `강아지`에서 `고양이`로 선택이 바뀌면 들고 있던 Kinds를 초기화해 고양이 축종인데 `강아지 품종`의 검색 방지
+            .onChange(of: filterReducer.upkind) { _, _ in
+                filterReducer.kinds.removeAll()
+            }
+
+            if let upkind = filterReducer.upkind, let kinds = provinceReducer.kind[upkind] {
+                // MARK: - 선택한 품종이 없다면 모든 품종을 부름
+                List(kinds, selection: $filterReducer.kinds) { kind in
+                    let isContained = filterReducer.kinds.contains(kind)
+                    Button {
+                        if isContained {
+                            filterReducer.kinds.remove(kind)
+                        } else {
+                            filterReducer.kinds.insert(kind)
+                        }
+                    } label: {
+                        togglingCheckbox(kind, isContained)
+                    }
+                    .tint(.primary)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func togglingCheckbox(_ kind: Kind, _ isSelected: Bool) -> some View {
+        let image = isSelected ? "checkmark.circle.fill" : "circle"
+        HStack {
+            Image(systemName: image)
+                .foregroundStyle(isSelected ? .blue : .gray)
+            Text(kind.name)
         }
     }
 }

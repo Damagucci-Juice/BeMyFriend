@@ -20,7 +20,7 @@ final class FilterReducer: ObservableObject {
     var beginDate = Date.now.addingTimeInterval(UIConstants.Date.aDayBefore*10) // 10일 전
     var endDate = Date()
     var upkind: Upkind?
-    var kinds: [Kind]
+    var kinds: Set<Kind>
     var sido: Sido?
     var sigungu: Sigungu?
     var shelter: Shelter?
@@ -52,7 +52,6 @@ final class FilterReducer: ObservableObject {
             }
         }
     }
-
 
     func reset() {
         onProcessing = false
