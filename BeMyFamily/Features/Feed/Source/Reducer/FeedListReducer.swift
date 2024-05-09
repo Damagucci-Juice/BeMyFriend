@@ -73,7 +73,6 @@ final class FeedListReducer: ObservableObject {
         await updateUI(results)
     }
 
-
     /// filter가 값을 가지고 있으면 애니멀 리스트에 추가
     /// 그렇지 않다면 selectedFilter에서 제거하고 emptyFIlter에 값을 저장
     /// 추후 emptyFilter는 토글로써 쓰임
