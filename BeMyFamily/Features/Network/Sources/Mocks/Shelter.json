@@ -1,0 +1,47 @@
+{
+    "response": {
+        "header": {
+            "reqNo": 260063007,
+            "resultCode": "00",
+            "resultMsg": "NORMAL SERVICE."
+        },
+        "body": {
+            "items": {
+                "item": [
+                    {
+                        "careRegNo": "327346201500009",
+                        "careNm": "제니스동물병원"
+                    },
+                    {
+                        "careRegNo": "327346201500011",
+                        "careNm": "신세계동물병원"
+                    },
+                    {
+                        "careRegNo": "327346201500001",
+                        "careNm": "(사)대구수의사회"
+                    },
+                    {
+                        "careRegNo": "327346201800001",
+                        "careNm": "허동물병원"
+                    },
+                    {
+                        "careRegNo": "327346201800002",
+                        "careNm": "금강동물병원"
+                    },
+                    {
+                        "careRegNo": "327346201900001",
+                        "careNm": "펫동물병원"
+                    },
+                    {
+                        "careRegNo": "327346202300002",
+                        "careNm": "세인트동물병원"
+                    },
+                    {
+                        "careRegNo": "327346202300001",
+                        "careNm": "멘토동물병원"
+                    }
+                ]
+            }
+        }
+    }
+}

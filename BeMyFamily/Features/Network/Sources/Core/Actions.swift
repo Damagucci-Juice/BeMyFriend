@@ -25,7 +25,7 @@ struct Actions {
             }
         }
     }
-
+    // TODO: - SetSido
     struct FetchSigungu: AsyncAction {
         let service: SearchService
 
@@ -61,6 +61,8 @@ struct Actions {
             }
         }
     }
+
+    // TODO: - SetSigungu
 
     struct FetchShelter: AsyncAction {
         let service: SearchService

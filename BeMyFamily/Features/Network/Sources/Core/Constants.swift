@@ -38,4 +38,15 @@ struct Constants {
         static let notFound = "Error 401 Animal not found"
         static let responseHadError = "Something went wrong."
     }
+    
+    struct TestFile {
+        static let sido = "Sido.json"
+        static let sigungu = "Sigungu.json"
+        static let kind = "Kind.json"
+        static let shelter = "Shelter.json"
+        static let animal = "Animal.json"
+
+        static let emptyShelter = "EmptyShelter.json"
+        static let emptyAnimal = "EmptyAnimal.json"
+    }
 }

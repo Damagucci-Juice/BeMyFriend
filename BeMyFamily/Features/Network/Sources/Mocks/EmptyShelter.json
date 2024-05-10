@@ -1,0 +1,12 @@
+{
+    "response": {
+        "header": {
+            "reqNo": 260062455,
+            "resultCode": "00",
+            "resultMsg": "NORMAL SERVICE."
+        },
+        "body": {
+            "items": {}
+        }
+    }
+}
