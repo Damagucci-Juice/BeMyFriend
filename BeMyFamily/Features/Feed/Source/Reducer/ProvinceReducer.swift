@@ -9,14 +9,14 @@ import Foundation
 
 @Observable
 final class ProvinceReducer: ObservableObject {
-    private let service: FriendSearchService
+    private let service: FamilyService
 
     private(set) var kind = [Upkind: [Kind]]()
     private(set) var sido = [Sido]()    // MAYBE: - 1안, Dictionary로 빼기, 2안 Sido안에 Sigungu, Shelter를 포함한 새로운 Entity를 제작
     private(set) var province = [Sido: [Sigungu]]()
     private(set) var shelter = [Sigungu: [Shelter]]()
 
-    init(service: FriendSearchService = .init(session: .shared)) {
+    init(service: FamilyService = .init(session: .shared)) {
         self.service = service
 
         Task {

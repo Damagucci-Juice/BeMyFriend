@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum FriendEndpoint {
+enum FamilyEndpoint {
     case sido
     case sigungu(sido: String)
     case shelter(sido: String, sigungu: String)
@@ -15,7 +15,7 @@ enum FriendEndpoint {
     case animal(filteredItem: AnimalFilter, page: Int)
 }
 
-extension FriendEndpoint {
+extension FamilyEndpoint {
     var baseURL: URL {
         // swiftlint:disable force_unwrapping
         return URL(string: Constants.Network.baseUrlPath)!

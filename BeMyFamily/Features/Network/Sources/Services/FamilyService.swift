@@ -40,12 +40,12 @@ public struct HttpStatusCode {
 
 protocol SearchService: AnyObject {
 //    func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error>
-    func search(_ endpoint: FriendEndpoint) async throws -> Data?
+    func search(_ endpoint: FamilyEndpoint) async throws -> Data
 //    func performRequest(urlRequest: URLRequest) -> AnyPublisher<Data, Error>
-    func performRequest(urlRequest: URLRequest) async throws -> Data?
+    func performRequest(urlRequest: URLRequest) async throws -> Data
 }
 
-final class FriendSearchService: SearchService {
+final class FamilyService: SearchService {
     private let session: URLSession
     private let friendCache: NSCache<NSString, CacheEntryObject> = NSCache()
 
@@ -77,11 +77,15 @@ final class FriendSearchService: SearchService {
     }
  */
 
-    public func search(_ endpoint: FriendEndpoint) async throws -> Data? {
-        return try await performRequest(urlRequest: endpoint.makeURLRequest())
+    public func search(_ endpoint: FamilyEndpoint) async throws -> Data {
+        do {
+            return try await performRequest(urlRequest: endpoint.makeURLRequest())
+        } catch {
+            throw error
+        }
     }
 
-    public func performRequest(urlRequest: URLRequest) async throws -> Data? {
+    public func performRequest(urlRequest: URLRequest) async throws -> Data {
         guard let url = urlRequest.url else {
             throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }

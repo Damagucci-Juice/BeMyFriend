@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension FriendEndpoint {
+extension FamilyEndpoint {
     func makeURL() -> URL {
         let urlString = baseURL.absoluteString + path
         guard let url = URL(string: urlString) else {

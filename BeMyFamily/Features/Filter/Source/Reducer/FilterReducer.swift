@@ -9,8 +9,8 @@ import Foundation
 
 @Observable
 final class FilterReducer: ObservableObject {
-    private let service: FriendSearchService
-    init(service: FriendSearchService = .init(session: .shared)) {
+    private let service: FamilyService
+    init(service: FamilyService = .init(session: .shared)) {
         self.service = service
         self.kinds = []
     }

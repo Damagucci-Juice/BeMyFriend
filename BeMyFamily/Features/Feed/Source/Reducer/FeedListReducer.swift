@@ -8,7 +8,7 @@ import SwiftUI
 
 @Observable
 final class FeedListReducer: ObservableObject {
-    private let service: FriendSearchService
+    private let service: FamilyService
     private let filterReducer: FilterReducer
 
     var menu = FriendMenu.feed
@@ -21,7 +21,7 @@ final class FeedListReducer: ObservableObject {
     private(set) var page = 1
     private var lastFetchTime: Date?
 
-    init(service: FriendSearchService = .init(session: .shared), filterReducer: FilterReducer) {
+    init(service: FamilyService = .init(session: .shared), filterReducer: FilterReducer) {
         self.service = service
         self.filterReducer = filterReducer
         // MARK: - Load Saved Animals from User Defaualts
@@ -96,10 +96,16 @@ final class FeedListReducer: ObservableObject {
 
     private func fetchAnimals(with filter: AnimalFilter) async throws -> ([Animal], Bool) {
         let pageToFetch = self.menu == .feed ? page : filterPage
-        let results = try await Actions
-            .FetchAnimal(service: service, filter: filter, page: pageToFetch)
-            .execute().results
-        return (syncWithFavorites(results), results.isEmpty)
+        let animals: [Animal]
+
+        do {
+            animals = try await Actions
+                .FetchAnimal(service: service, filter: filter, page: pageToFetch)
+                .execute()
+            return (animals, animals.isEmpty)
+        } catch {
+            throw error
+        }
     }
 
     // 해당 동물의 isLiked 프로퍼티를 업데이트하고 이를 현재 선택된 menu의 동물 리스트와 업데이트함

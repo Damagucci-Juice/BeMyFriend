@@ -10,39 +10,33 @@ import Combine
 
 struct Actions {
     struct FetchSido: AsyncAction {
-        let service: FriendSearchService
+        let service: SearchService
 
         public func execute() async throws -> PaginatedResponse<Sido> {
-            if let fetched = try await service.search(.sido) {
-                do {
-                    let sidoResponse = try JSONDecoder().decode(PaginatedAPIResponse<Sido>.self, from: fetched)
-                    return PaginatedResponse(numbersOfRow: sidoResponse.numOfRows,
-                                             pageNumber: sidoResponse.pageNo,
-                                             totalCounts: sidoResponse.totalCount,
-                                             results: sidoResponse.items)
-                } catch let error {
-                    dump(fetched.prettyPrintedJSONString ?? "")
-                    throw error
-                }
+            do {
+                let fetched = try await service.search(.sido)
+                let sidoResponse = try JSONDecoder().decode(PaginatedAPIResponse<Sido>.self, from: fetched)
+                return PaginatedResponse(numbersOfRow: sidoResponse.numOfRows,
+                                         pageNumber: sidoResponse.pageNo,
+                                         totalCounts: sidoResponse.totalCount,
+                                         results: sidoResponse.items)
+            } catch let error {
+                throw error
             }
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
     }
 
     struct FetchSigungu: AsyncAction {
-        let service: FriendSearchService
+        let service: SearchService
 
         private func execute(_ sidoCode: String) async throws -> Response<Sigungu> {
-            if let fetched = try await service.search(.sigungu(sido: sidoCode)) {
-                do {
-                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Sigungu>.self, from: fetched)
-                    return Response(results: sigunguResponse.items)
-                } catch let error {
-                    dump(fetched.prettyPrintedJSONString ?? "")
-                    throw error
-                }
+            do {
+                let fetched = try await service.search(.sigungu(sido: sidoCode))
+                let sigunguResponse = try JSONDecoder().decode(APIResponse<Sigungu>.self, from: fetched)
+                return Response(results: sigunguResponse.items)
+            } catch let error {
+                throw error
             }
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
 
         public func execute(by sidos: [Sido]) async -> [Sido: [Sigungu]] {
@@ -69,19 +63,15 @@ struct Actions {
     }
 
     struct FetchShelter: AsyncAction {
-        let service: FriendSearchService
+        let service: SearchService
 
-        private func execute(_ sidoCode: String, _ sigunguCode: String) async throws -> Response<Shelter> {
-            if let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode)) {
-                do {
-                    let shelterResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: fetched)
-                    return Response(results: shelterResponse.items)
-                } catch let error {
-                    dump(fetched.prettyPrintedJSONString ?? "")
-                    throw error
-                }
+        private func execute(_ sidoCode: String, _ sigunguCode: String) async throws -> [Shelter] {
+            do {
+                let fetched = try await service.search(.shelter(sido: sidoCode, sigungu: sigunguCode))
+                return try SetShelter(data: fetched).excute().results
+            } catch let error {
+                throw error
             }
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
 
         public func execute(by province: [Sido: [Sigungu]]) async -> [Sigungu: [Shelter]] {
@@ -90,7 +80,7 @@ struct Actions {
                     for eachSigungu in sigungus {
                         group.addTask {
                             do {
-                                let fetchedShelter = try await execute(sido.id, eachSigungu.id).results
+                                let fetchedShelter = try await execute(sido.id, eachSigungu.id)
                                 return (eachSigungu, fetchedShelter)
                             } catch {
                                 NSLog("Error fetching Shelter for \(sido.id): \(error)")
@@ -108,27 +98,32 @@ struct Actions {
         }
     }
 
-    struct FetchKind: AsyncAction {
-        let service: FriendSearchService
+    struct SetShelter: Action {
+        let data: Data
 
-        private func execute(_ upkindCode: String) async throws -> Response<Kind> {
-            if let fetched = try await service.search(.kind(upkind: upkindCode)) {
-                do {
-                    let sigunguResponse = try JSONDecoder().decode(APIResponse<Kind>.self, from: fetched)
-                    return Response(results: sigunguResponse.items)
-                } catch let error {
-                    dump(fetched.prettyPrintedJSONString ?? "")
-                    throw error
-                }
+        public func excute() throws -> Response<Shelter> {
+            let shelterResponse = try JSONDecoder().decode(APIResponse<Shelter>.self, from: data)
+            return Response(results: shelterResponse.items)
+        }
+    }
+
+    struct FetchKind: AsyncAction {
+        let service: SearchService
+
+        private func execute(_ upkindCode: String) async throws -> [Kind] {
+            do {
+                let fetched = try await service.search(.kind(upkind: upkindCode))
+                return try SetKind(data: fetched).excute().results
+            } catch {
+                throw error
             }
-            throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
         }
 
         public func execute(by upkinds: [Upkind]) async throws -> [Upkind: [Kind]] {
             try await withThrowingTaskGroup(of: (Upkind, [Kind]).self) { group in
                 for upkind in upkinds {
                     group.addTask {
-                        let fetchedKind = try await execute(upkind.id).results
+                        let fetchedKind = try await execute(upkind.id)
                         return (upkind, fetchedKind)
                     }
                 }
@@ -143,25 +138,46 @@ struct Actions {
         }
     }
 
+    struct SetKind: Action {
+        let data: Data
+
+        func excute() throws -> Response<Kind> {
+            do {
+                let sigunguResponse = try JSONDecoder().decode(APIResponse<Kind>.self, from: data)
+                return Response(results: sigunguResponse.items)
+            } catch {
+                throw error
+            }
+        }
+    }
+
     struct FetchAnimal: AsyncAction {
-        let service: FriendSearchService
+        let service: SearchService
         let filter: AnimalFilter
         let page: Int
 
-        public func execute() async throws -> PaginatedResponse<Animal> {
-            guard let fetched = try await service.search(.animal(filteredItem: filter, page: page)) else {
-                throw HTTPError.invalidResponse(HttpStatusCode.ClientError.notFoundError)
-            }
+        public func execute() async throws -> [Animal] {
             do {
-                let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: fetched)
+                let fetched = try await service.search(.animal(filteredItem: filter, page: page))
+                return try SetAnimal(data: fetched).excute().results
+            } catch let error {
+                throw error
+            }
+        }
+    }
+
+    struct SetAnimal: Action {
+        let data: Data
+
+        public func excute() throws -> PaginatedResponse<Animal> {
+            do {
+                let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: data)
                 return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
                                          pageNumber: animalResponse.pageNo,
                                          totalCounts: animalResponse.totalCount,
                                          results: animalResponse.items)
-            } catch let error {
-                dump(fetched.prettyPrintedJSONString ?? "")
-                // MARK: - 데이터가 없어서 PaginatedAPIResponse.items 항목을 생성하지 못해 디코딩 에러가 발생함
-                throw HTTPError.dataEmtpy(error.localizedDescription)
+            } catch {
+                throw error
             }
         }
     }
