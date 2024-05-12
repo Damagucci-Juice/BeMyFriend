@@ -8,8 +8,8 @@ import SwiftUI
 
 @Observable
 final class FeedListReducer: ObservableObject {
-    private let service: FamilyService
-    private let filterReducer: FilterReducer
+    private let service: SearchService
+    private let filterReducer: FilterReducer // TODO: 스토어가 없기 때문에 들고 있는 것이고, 만약 있다면 이 프로퍼티는 없어져야함
 
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
@@ -21,7 +21,7 @@ final class FeedListReducer: ObservableObject {
     private(set) var page = 1
     private var lastFetchTime: Date?
 
-    init(service: FamilyService = .init(session: .shared), filterReducer: FilterReducer) {
+    init(service: SearchService, filterReducer: FilterReducer) {
         self.service = service
         self.filterReducer = filterReducer
         // MARK: - Load Saved Animals from User Defaualts
@@ -37,14 +37,13 @@ final class FeedListReducer: ObservableObject {
         }
         lastFetchTime = now
 
-        Task {
-            await fetchMultiKindsAnimals(filters)
-        }
+        let fetchedAnimals = await fetchMultiKindsAnimals(filters)
+        animalDict[self.menu, default: []] += fetchedAnimals
      }
 
     // TODO: - 리펙터링 해야함
-    private func fetchMultiKindsAnimals(_ filters: [AnimalFilter]) async {
-        guard !isLoading else { return }
+    private func fetchMultiKindsAnimals(_ filters: [AnimalFilter]) async -> [Animal] {
+        guard !isLoading else { return [] }
             isLoading = true
 
         // 필터가 이전과 다르면 초기화하고 새로 설정
@@ -70,14 +69,15 @@ final class FeedListReducer: ObservableObject {
             return aggregatedResults
         }
 
-        await updateUI(results)
+        return await updateUI(results)
     }
 
     /// filter가 값을 가지고 있으면 애니멀 리스트에 추가
     /// 그렇지 않다면 selectedFilter에서 제거하고 emptyFIlter에 값을 저장
     /// 추후 emptyFilter는 토글로써 쓰임
     @MainActor
-    private func updateUI(_ results: [AnimalFilter: [Animal]]) {
+    private func updateUI(_ results: [AnimalFilter: [Animal]]) -> [Animal] {
+        var animalContainer = [Animal]()
         for (filter, animals) in results {
             if animals.isEmpty {
                 /// filter가 빈 값을 내보내면 selectedFilter에서 제거
@@ -87,11 +87,12 @@ final class FeedListReducer: ObservableObject {
                     self.filterReducer.updateEmptyReulst(with: removedFilter)
                 }
             } else {
-                animalDict[self.menu, default: []] += syncWithFavorites(animals)
+                animalContainer += syncWithFavorites(animals)
             }
         }
         if self.menu == .filter { filterPage += 1 } else { page += 1 }
         isLoading = false
+        return animalContainer
     }
 
     private func fetchAnimals(with filter: AnimalFilter) async throws -> ([Animal], Bool) {
@@ -119,6 +120,7 @@ final class FeedListReducer: ObservableObject {
             } else {
                 likedAnimals.append(heartedAnimal)
             }
+            // ui update point
             animalDict[FriendMenu.favorite] = likedAnimals
             saveFavorites(using: likedAnimals)
         }

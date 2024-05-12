@@ -8,15 +8,15 @@
 import Foundation
 
 struct DIContainer {
-    static func makeFeedListReducer(_ filterReducer: FilterReducer) -> FeedListReducer {
-        return FeedListReducer(service: .init(session: .shared), filterReducer: filterReducer)
+    static func makeFeedListReducer(_ filterReducer: FilterReducer, service: SearchService = FamilyService()) -> FeedListReducer {
+        return FeedListReducer(service: service, filterReducer: filterReducer)
     }
 
     static func makeFilterReducer() -> FilterReducer {
         return FilterReducer()
     }
 
-    static func makeProvinceReducer() -> ProvinceReducer {
-        return ProvinceReducer(service: .init(session: .shared))
+    static func makeProvinceReducer(service: SearchService = FamilyService()) -> ProvinceReducer {
+        return ProvinceReducer(service: service)
     }
 }

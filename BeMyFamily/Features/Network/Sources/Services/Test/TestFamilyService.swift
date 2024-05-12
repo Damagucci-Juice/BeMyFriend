@@ -9,7 +9,7 @@ import Foundation
 
 final class TestFamilyService: SearchService {
     let isEmptyResultTest: Bool
-    init(isEmptyResultTest: Bool) {
+    init(isEmptyResultTest: Bool = false) {
         self.isEmptyResultTest = isEmptyResultTest
     }
 
