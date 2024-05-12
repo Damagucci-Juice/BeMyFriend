@@ -13,7 +13,7 @@ struct DIContainer {
     }
 
     static func makeFilterReducer() -> FilterReducer {
-        return FilterReducer(service: .init(session: .shared))
+        return FilterReducer()
     }
 
     static func makeProvinceReducer() -> ProvinceReducer {

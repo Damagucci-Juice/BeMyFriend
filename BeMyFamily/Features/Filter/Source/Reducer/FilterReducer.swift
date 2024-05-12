@@ -9,11 +9,7 @@ import Foundation
 
 @Observable
 final class FilterReducer: ObservableObject {
-    private let service: FamilyService
-    init(service: FamilyService = .init(session: .shared)) {
-        self.service = service
-        self.kinds = []
-    }
+    init() { self.kinds = [] }
     private(set) var onProcessing = false
     private(set) var emptyResultFilters = [AnimalFilter]()
 
