@@ -11,13 +11,19 @@ import XCTest
 final class FeedListReducerTest: XCTestCase {
 
     private var feedListReducer: FeedListReducer!
+    private var emptyResultFeedListReducer: FeedListReducer!
+    private var filterReducer: FilterReducer!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
         let testService = TestFamilyService()
         let filterReducer = DIContainer.makeFilterReducer()
+        let emptyResultService = TestFamilyService(isEmptyResultTest: true)
+        self.filterReducer = filterReducer
         self.feedListReducer = DIContainer.makeFeedListReducer(filterReducer,
                                                                service: testService)
+        self.emptyResultFeedListReducer = DIContainer.makeFeedListReducer(filterReducer,
+                                                                          service: emptyResultService)
     }
 
     override func tearDownWithError() throws {
@@ -38,7 +44,6 @@ final class FeedListReducerTest: XCTestCase {
         XCTAssertEqual(feedListReducer.menu, FriendMenu.favorite, "탭 변환이 실패했습니다.")
     }
 
-    // TODO: - Multi Filter Fetch는 어떻게 테스트를 할 것인가?
     func testFetchingMultiFilteredAnimals() async throws {
         // Test시에는 하나의 필터 엘리먼트마다 10개의 리소스가 로드됨, 필터 3개를 요청하니 결과는 30이여야함
         feedListReducer.setMenu(.filter)
@@ -46,5 +51,10 @@ final class FeedListReducerTest: XCTestCase {
         let fetchedAnimals = feedListReducer.animalDict[.filter]
         XCTAssertNotNil(fetchedAnimals)
         XCTAssertEqual(fetchedAnimals?.count, 30)
+    }
+
+    func testEmptyAnimalResult() async throws {
+        await emptyResultFeedListReducer.fetchAnimalsIfCan()
+        XCTAssertFalse(self.filterReducer.emptyResultFilters.isEmpty, "emptyResultFilters에 값이 존재해야합니다.")
     }
 }
