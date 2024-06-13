@@ -14,7 +14,7 @@ protocol Sharable: View {
 extension Sharable {
     @MainActor
     func render(object: Animal, img image: Image, displayScale: CGFloat) -> Image? {
-        let renderer = ImageRenderer(content: CardNewView(image: image, animal: object))
+        let renderer = ImageRenderer(content: CardNewsView(image: image, animal: object))
 
         // make sure and use the correct display scale for this device
         renderer.scale = displayScale

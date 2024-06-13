@@ -1,5 +1,5 @@
 //
-//  CardNewView.swift
+//  CardNewsView.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/26/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CardNewView: View {
+struct CardNewsView: View {
     let image: Image
     let animal: Animal
 
@@ -59,5 +59,5 @@ struct CardNewView: View {
 
 #Preview {
     let animals = ModelData().animals.items
-    return CardNewView(image: Image(systemName: "photo"), animal: animals[0])
+    return CardNewsView(image: Image(systemName: "photo"), animal: animals[0])
 }
