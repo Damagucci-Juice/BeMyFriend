@@ -37,3 +37,98 @@ An application that uses the Ministry of Health and Welfare's stray animal track
 ## Architecture
 `Layered architecture`, `MVVM(Model-View-ViewModel)` is used in this project.
 <img width="867" alt="image" src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/c34af3bc-cb79-43c9-8747-8785f3bed8cb">
+
+## Folder Structure
+```
+BEMYFAMILY/
+├── APP/
+│   ├── Shared/
+│   │   ├── Resource/
+│   │   │   ├── Info.plist
+│   │   │   ├── PrivacyInfo.xcprivacy
+│   │   │   └── Launch Screen
+│   │   └── Source/
+│   │       ├── Scene/
+│   │       │   ├── BeMyFamilyApp
+│   │       │   └── ContentView
+│   │       ├── Core/
+│   │       │   ├── UIConstants
+│   │       │   └── DIContainer
+│   │       ├── Model/
+│   │       │   ├── Animal/
+│   │       │   │   └── AnimalSub/
+│   │       │   │       ├── Kind
+│   │       │   │       ├── Upkind
+│   │       │   │       ├── Neutralization
+│   │       │   │       ├── SexCd
+│   │       │   │       └── ProcessState
+│   │       │   ├── Sido
+│   │       │   ├── Sigungu
+│   │       │   ├── Shelter
+│   │       │   ├── Kind
+│   │       │   └── Upkind
+│   │       └── Extension/
+│   │           ├── Data+extension
+│   │           └── Font+extension
+│   └── Features/
+│       ├── Share/
+│       │   └── Source/
+│       │       ├── Utils/
+│       │       │   └── Sharable
+│       │       └── Scene/
+│       │           └── CardNewsView
+│       ├── Filter/
+│       │   └── Source/
+│       │       ├── Reducer/
+│       │       │   └── FilterReducer
+│       │       ├── Model/
+│       │       │   └── AnimalFilter
+│       │       └── Scene/
+│       │           └── AninmalFilterForm
+│       ├── Feed/
+│       │   └── Source/
+│       │       ├── Reducer/
+│       │       │   ├── FeedListReducer
+│       │       │   └── ProvinceReducer
+│       │       └── Scene/
+│       │           ├── FeedView
+│       │           └── Sub/
+│       │               ├── FeedItemView
+│       │               ├── AnimalDetailView
+│       │               ├── LikeButton
+│       │               └── ShareButton
+│       ├── Home/
+│       │   └── Source/
+│       │       ├── Core/
+│       │       │   └── FriendMenu
+│       │       └── Scene/
+│       │           └── TabControlView
+│       └── Network/
+│           └── Source/
+│               ├── Mocks/
+│               │   ├── Animal.json
+│               │   ├── Sido.json
+│               │   ├── Sigungu.json
+│               │   ├── EmptyAnimal.json
+│               │   ├── Kind.json
+│               │   ├── Shelter.json
+│               │   ├── EmptyShelter.json
+│               │   └── ModelData
+│               ├── Response/
+│               │   ├── PaginatedAPIResponse
+│               │   ├── PaginatedResponse
+│               │   ├── APIResponse
+│               │   └── Response
+│               ├── Services/
+│               │   ├── Test/
+│               │   │   └── TestFamilyService
+│               │   ├── FamilyService
+│               │   ├── FamilyEndpoint
+│               │   └── FamilyEndpoint+extension
+│               └── Core/
+│                   ├── Actions
+│                   ├── CacheEntryObject
+│                   ├── NSCache+Subscript
+│                   └── Constants
+└── TEST
+```
