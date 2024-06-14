@@ -8,19 +8,14 @@
 An application that uses the Ministry of Health and Welfare's stray animal tracking API to notify users of stray animal outbreaks
 
 ## Screenshots
-<div align="center">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/c38ac7e2-8b29-4262-9d2b-b1714db7038f" width="25%">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/d2cfee1e-905c-471b-af0a-73ad5d5655a9" width="25%">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/df0e3357-9802-4455-9476-b4a27ce6ba6a" width="25%">
-</a>
-</div>
-<div align="center">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/8c96db24-f971-4011-a781-2e76ccc0904d" width="25%">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/188cb5c3-0f32-44a5-86d5-5201e3456dfe" width="25%">
-    <img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/e4ce4d4a-47fb-4fc6-ba81-d78c408df4af" width="25%">
-</a>
-</div>
 
+| Initial page | Unlimited scrolling | Detail page |
+|---|---|---|
+|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/c38ac7e2-8b29-4262-9d2b-b1714db7038f" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/d2cfee1e-905c-471b-af0a-73ad5d5655a9" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/df0e3357-9802-4455-9476-b4a27ce6ba6a" width="100%">|
+
+| Favorite page | Fetching by Multi kind | Filtering Detail infomations |
+|---|---|---|
+|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/8c96db24-f971-4011-a781-2e76ccc0904d" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/188cb5c3-0f32-44a5-86d5-5201e3456dfe" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/e4ce4d4a-47fb-4fc6-ba81-d78c408df4af" width="100%">|
 
 
 
