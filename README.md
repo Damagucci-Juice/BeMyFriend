@@ -11,7 +11,7 @@ An application that uses the Ministry of Health and Welfare's stray animal track
 
 | Initial page | Unlimited scrolling | Detail page |
 |---|---|---|
-|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/c38ac7e2-8b29-4262-9d2b-b1714db7038f" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/54a6f99e-c04a-4d5d-937f-e51736f57742" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/df0e3357-9802-4455-9476-b4a27ce6ba6a" width="100%">|
+|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/c38ac7e2-8b29-4262-9d2b-b1714db7038f" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/ca336e07-9473-4f87-830e-22c8d8869c60" width="100%">|<img src="https://github.com/Damagucci-Juice/BeMyFriend/assets/50472122/df0e3357-9802-4455-9476-b4a27ce6ba6a" width="100%">|
 
 | Favorite page | Fetching by Multi kind | Filtering Detail infomations |
 |---|---|---|
