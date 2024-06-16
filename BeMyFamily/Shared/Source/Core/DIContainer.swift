@@ -16,7 +16,7 @@ struct DIContainer {
         return FilterReducer()
     }
 
-    static func makeProvinceReducer(service: SearchService = FamilyService()) -> ProvinceReducer {
-        return ProvinceReducer(service: service)
+    static func makeProvinceReducer(service: SearchService = FamilyService()) -> ProvinceViewModel {
+        return ProvinceViewModel(service: service)
     }
 }

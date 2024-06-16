@@ -11,7 +11,7 @@ struct AnimalFilterForm: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var reducer: FeedViewModel
     @EnvironmentObject var filterReducer: FilterReducer
-    @EnvironmentObject var provinceReducer: ProvinceReducer
+    @EnvironmentObject var provinceReducer: ProvinceViewModel
 
     var body: some View {
         NavigationStack {

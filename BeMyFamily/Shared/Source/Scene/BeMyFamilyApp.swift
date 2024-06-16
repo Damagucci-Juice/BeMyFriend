@@ -11,7 +11,7 @@ import SwiftUI
 struct BeMyFamilyApp: App {
     @StateObject private var filterReducer: FilterReducer
     @StateObject private var reducer: FeedViewModel
-    @StateObject private var provinceReducer: ProvinceReducer
+    @StateObject private var provinceReducer: ProvinceViewModel
 
     init() {
         let filterReducer = DIContainer.makeFilterReducer()

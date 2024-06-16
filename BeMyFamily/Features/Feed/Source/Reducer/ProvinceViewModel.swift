@@ -1,5 +1,5 @@
 //
-//  ProvinceReducer.swift
+//  ProvinceViewModel.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/30/24.
@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable
-final class ProvinceReducer: ObservableObject {
+final class ProvinceViewModel: ObservableObject {
     private let service: SearchService
 
     private(set) var kind = [Upkind: [Kind]]()
