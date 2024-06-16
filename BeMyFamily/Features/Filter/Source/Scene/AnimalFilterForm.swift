@@ -10,7 +10,7 @@ import SwiftUI
 struct AnimalFilterForm: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var reducer: FeedViewModel
-    @EnvironmentObject var filterReducer: FilterReducer
+    @EnvironmentObject var filterReducer: FilterViewModel
     @EnvironmentObject var provinceReducer: ProvinceViewModel
 
     var body: some View {

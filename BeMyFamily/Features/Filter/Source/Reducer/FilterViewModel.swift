@@ -1,5 +1,5 @@
 //
-//  FilterReducer.swift
+//  FilterViewModel.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/26/24.
@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable
-final class FilterReducer: ObservableObject {
+final class FilterViewModel: ObservableObject {
     init() { self.kinds = [] }
     private(set) var onProcessing = false
     private(set) var emptyResultFilters = [AnimalFilter]()

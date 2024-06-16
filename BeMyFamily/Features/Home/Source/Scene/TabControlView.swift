@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabControlView: View {
     @EnvironmentObject var reducer: FeedViewModel
-    @EnvironmentObject var filterReducer: FilterReducer
+    @EnvironmentObject var filterReducer: FilterViewModel
 
     var body: some View {
         TabView(selection: $reducer.menu) {

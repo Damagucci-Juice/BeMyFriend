@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 final class FeedViewModel: ObservableObject {
     private let service: SearchService
-    private let filterReducer: FilterReducer // TODO: 스토어가 없기 때문에 들고 있는 것이고, 만약 있다면 이 프로퍼티는 없어져야함
+    private let filterReducer: FilterViewModel // TODO: 스토어가 없기 때문에 들고 있는 것이고, 만약 있다면 이 프로퍼티는 없어져야함
 
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
@@ -21,7 +21,7 @@ final class FeedViewModel: ObservableObject {
     private(set) var page = 1
     private var lastFetchTime: Date?
 
-    init(service: SearchService, filterReducer: FilterReducer) {
+    init(service: SearchService, filterReducer: FilterViewModel) {
         self.service = service
         self.filterReducer = filterReducer
         // MARK: - Load Saved Animals from User Defaualts

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject var reducer: FeedViewModel
-    @EnvironmentObject var filterReducer: FilterReducer
+    @EnvironmentObject var filterReducer: FilterViewModel
     @State private var showfilter = false
     @State private var alertKind = "해당"
     @State private var isReachedToBottom = false

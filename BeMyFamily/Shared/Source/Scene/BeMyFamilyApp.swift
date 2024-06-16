@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct BeMyFamilyApp: App {
-    @StateObject private var filterReducer: FilterReducer
+    @StateObject private var filterReducer: FilterViewModel
     @StateObject private var reducer: FeedViewModel
     @StateObject private var provinceReducer: ProvinceViewModel
 
