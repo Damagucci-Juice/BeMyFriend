@@ -8,8 +8,8 @@
 import Foundation
 
 struct DIContainer {
-    static func makeFeedListReducer(_ filterReducer: FilterReducer, service: SearchService = FamilyService()) -> FeedListReducer {
-        return FeedListReducer(service: service, filterReducer: filterReducer)
+    static func makeFeedListReducer(_ filterReducer: FilterReducer, service: SearchService = FamilyService()) -> FeedViewModel {
+        return FeedViewModel(service: service, filterReducer: filterReducer)
     }
 
     static func makeFilterReducer() -> FilterReducer {

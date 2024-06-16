@@ -1,5 +1,5 @@
 //
-//  FeedListReducer.swift
+//  FeedViewModel.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/19/24.
@@ -7,7 +7,7 @@
 import SwiftUI
 
 @Observable
-final class FeedListReducer: ObservableObject {
+final class FeedViewModel: ObservableObject {
     private let service: SearchService
     private let filterReducer: FilterReducer // TODO: 스토어가 없기 때문에 들고 있는 것이고, 만약 있다면 이 프로퍼티는 없어져야함
 

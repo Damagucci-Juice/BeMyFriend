@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct BeMyFamilyApp: App {
     @StateObject private var filterReducer: FilterReducer
-    @StateObject private var reducer: FeedListReducer
+    @StateObject private var reducer: FeedViewModel
     @StateObject private var provinceReducer: ProvinceReducer
 
     init() {

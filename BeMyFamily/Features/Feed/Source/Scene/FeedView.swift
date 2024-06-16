@@ -8,7 +8,7 @@ import NukeUI
 import SwiftUI
 
 struct FeedView: View {
-    @EnvironmentObject var reducer: FeedListReducer
+    @EnvironmentObject var reducer: FeedViewModel
     @EnvironmentObject var filterReducer: FilterReducer
     @State private var showfilter = false
     @State private var alertKind = "해당"
