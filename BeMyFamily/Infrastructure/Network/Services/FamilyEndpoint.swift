@@ -18,22 +18,22 @@ enum FamilyEndpoint {
 extension FamilyEndpoint {
     var baseURL: URL {
         // swiftlint:disable force_unwrapping
-        return URL(string: Constants.Network.baseUrlPath)!
+        return URL(string: NetworkConstants.Path.baseUrl)!
         // swiftlint:enable force_unwrapping
     }
 
     var path: String {
         switch self {
         case .sido:
-            return Constants.Network.sidoPath
+            return NetworkConstants.Path.sido
         case .sigungu:
-            return Constants.Network.sigunguPath
+            return NetworkConstants.Path.sigungu
         case .shelter:
-            return Constants.Network.shelterPath
+            return NetworkConstants.Path.shelter
         case .kind:
-            return Constants.Network.kindPath
+            return NetworkConstants.Path.kind
         case .animal:
-            return Constants.Network.animalPath
+            return NetworkConstants.Path.animal
         }
     }
 
@@ -51,7 +51,7 @@ extension FamilyEndpoint {
 
         switch self {
         case .sido:
-            dict.updateValue(Constants.NetworkParameters.totalSidoCount, forKey: "numOfRows")
+            dict.updateValue(NetworkConstants.Params.totalSidoCount, forKey: "numOfRows")
             dict.updateValue("1", forKey: "pageNo")
         case .sigungu(let sido):
             dict.updateValue(sido, forKey: "upr_cd")

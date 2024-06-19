@@ -7,19 +7,19 @@
 
 import Foundation
 
-struct Constants {
+struct NetworkConstants {
 
-    struct Network {
-        static let baseUrlPath = "http://apis.data.go.kr/1543061/abandonmentPublicSrvc/"
-        static let sidoPath = "sido"
-        static let sigunguPath = "sigungu"
-        static let shelterPath = "shelter"
-        static let kindPath = "kind"
-        static let animalPath = "abandonmentPublic"
-        static let dbPath = "SavedAnimals"
+    struct Path {
+        static let baseUrl = "http://apis.data.go.kr/1543061/abandonmentPublicSrvc/"
+        static let sido = "sido"
+        static let sigungu = "sigungu"
+        static let shelter = "shelter"
+        static let kind = "kind"
+        static let animal = "abandonmentPublic"
+        static let db = "SavedAnimals"
     }
 
-    struct NetworkParameters {
+    struct Params {
         static let totalSidoCount = "17"
     }
 

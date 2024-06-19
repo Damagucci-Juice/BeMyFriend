@@ -51,7 +51,7 @@ struct FeedItemView: View {
                                height: UIConstants.Frame.feedImageHeight)
                         .overlay {
                             if hasError {
-                                Text(Constants.Error.responseHadError)
+                                Text(NetworkConstants.Error.responseHadError)
                                     .font(.processState)
                             }
                         }
