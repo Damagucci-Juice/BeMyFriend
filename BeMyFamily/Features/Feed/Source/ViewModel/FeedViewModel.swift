@@ -128,7 +128,7 @@ final class FeedViewModel: ObservableObject {
     }
 
     private func loadSavedAnimals() -> [Animal] {
-        if let savedAnimals = UserDefaults.standard.object(forKey: NetworkConstants.Path.db) as? Data {
+        if let savedAnimals = UserDefaults.standard.object(forKey: NetworkConstants.Path.dataBase) as? Data {
             let decoder = JSONDecoder()
             if let loadedAnimals = try? decoder.decode([Animal].self, from: savedAnimals) {
                 loadedAnimals.forEach { $0.isFavorite = true }
@@ -141,7 +141,7 @@ final class FeedViewModel: ObservableObject {
     private func saveFavorites(using animals: [Animal]) {
         let encoder = JSONEncoder()
         if let encoded = try? encoder.encode(animals) {
-            UserDefaults.standard.set(encoded, forKey: NetworkConstants.Path.db)
+            UserDefaults.standard.set(encoded, forKey: NetworkConstants.Path.dataBase)
         }
     }
 

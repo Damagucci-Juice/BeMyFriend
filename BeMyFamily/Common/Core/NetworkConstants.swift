@@ -16,7 +16,7 @@ struct NetworkConstants {
         static let shelter = "shelter"
         static let kind = "kind"
         static let animal = "abandonmentPublic"
-        static let db = "SavedAnimals"
+        static let dataBase = "SavedAnimals"
     }
 
     struct Params {
@@ -38,7 +38,7 @@ struct NetworkConstants {
         static let notFound = "Error 401 Animal not found"
         static let responseHadError = "Something went wrong."
     }
-    
+
     struct TestFile {
         static let sido = "Sido.json"
         static let sigungu = "Sigungu.json"
