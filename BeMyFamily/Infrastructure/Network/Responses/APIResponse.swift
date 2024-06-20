@@ -7,7 +7,6 @@
 
 import Foundation
 
-// MARK: - API Response for "Sigungu, Shelter and Kind"
 struct APIResponse<T: Codable>: Decodable {
     let requestNumber: Int
     let resultCode: String
