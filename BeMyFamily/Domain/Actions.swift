@@ -12,14 +12,11 @@ struct Actions {
     struct FetchSido: AsyncAction {
         let service: SearchService
 
-        public func execute() async throws -> PaginatedResponse<Sido> {
+        public func execute() async throws -> Response<Sido> {
             do {
                 let fetched = try await service.search(.sido)
-                let sidoResponse = try JSONDecoder().decode(PaginatedAPIResponse<Sido>.self, from: fetched)
-                return PaginatedResponse(numbersOfRow: sidoResponse.numOfRows,
-                                         pageNumber: sidoResponse.pageNo,
-                                         totalCounts: sidoResponse.totalCount,
-                                         results: sidoResponse.items)
+                let sidoResponse = try JSONDecoder().decode(APIResponse<Sido>.self, from: fetched)
+                return Response(results: sidoResponse.items)
             } catch let error {
                 throw error
             }
@@ -171,13 +168,10 @@ struct Actions {
     struct SetAnimal: Action {
         let data: Data
 
-        public func excute() throws -> PaginatedResponse<Animal> {
+        public func excute() throws -> Response<Animal> {
             do {
-                let animalResponse = try JSONDecoder().decode(PaginatedAPIResponse<Animal>.self, from: data)
-                return PaginatedResponse(numbersOfRow: animalResponse.numOfRows,
-                                         pageNumber: animalResponse.pageNo,
-                                         totalCounts: animalResponse.totalCount,
-                                         results: animalResponse.items)
+                let animalResponse = try JSONDecoder().decode(APIResponse<Animal>.self, from: data)
+                return Response(results: animalResponse.items)
             } catch {
                 throw error
             }
