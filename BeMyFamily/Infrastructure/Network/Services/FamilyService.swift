@@ -39,9 +39,7 @@ public struct HttpStatusCode {
 }
 
 protocol SearchService: AnyObject {
-//    func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error>
     func search(_ endpoint: FamilyEndpoint) async throws -> Data
-//    func performRequest(urlRequest: URLRequest) -> AnyPublisher<Data, Error>
     func performRequest(urlRequest: URLRequest) async throws -> Data
 }
 
@@ -52,30 +50,6 @@ final class FamilyService: SearchService {
     public init(session: URLSession = .shared) {
         self.session = session
     }
-/*
-    func search(_ endpoint: FriendEndpoint) -> AnyPublisher<Data, Error> {
-        return performRequest(urlRequest: endpoint.makeURLRequest())
-    }
-
-    func performRequest(urlRequest: URLRequest) -> AnyPublisher<Data, Error> {
-        return session.dataTaskPublisher(for: urlRequest)
-            .tryMap { data, response -> Data in
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    throw HTTPError
-                        .invalidResponse(HttpStatusCode.ClientError.badRequest)
-                }
-                guard (HttpStatusCode.Success.range).contains(httpResponse.statusCode) else {
-                    if httpResponse.statusCode == HttpStatusCode.ClientError.notFoundError {
-                        throw HTTPError.notFoundResponse
-                    } else {
-                        throw HTTPError.invalidResponse(httpResponse.statusCode)
-                    }
-                }
-                return data
-            }
-            .eraseToAnyPublisher()
-    }
- */
 
     public func search(_ endpoint: FamilyEndpoint) async throws -> Data {
         do {
