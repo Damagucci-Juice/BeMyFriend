@@ -195,12 +195,12 @@ extension AnimalFilterForm {
 }
 
 #Preview {
-    @StateObject var filterReducer = DIContainer.makeFilterReducer()
+    @StateObject var filterReducer = DIContainer.makeFilterViewModel()
 
     return NavigationStack {
         AnimalFilterForm()
             .environmentObject(filterReducer)
-            .environmentObject(DIContainer.makeFeedListReducer(filterReducer))
-            .environmentObject(DIContainer.makeProvinceReducer())
+            .environmentObject(DIContainer.makeFeedListViewModel(filterReducer))
+            .environmentObject(DIContainer.makeProvinceViewModel())
     }
 }

@@ -7,16 +7,44 @@
 
 import Foundation
 
-struct DIContainer {
-    static func makeFeedListReducer(_ viewModel: FilterViewModel, service: SearchService = FamilyService()) -> FeedViewModel {
+class DIContainer: ObservableObject {
+    struct Dependencies {
+        // TODO: - 이미지 서비스 여기에 둬야함
+        let apiService: SearchService
+    }
+
+    private let dependencies: Dependencies
+
+    init(dependencies: Dependencies) {
+        self.dependencies = dependencies
+    }
+
+    // TODO: - Cache 여기에 둬야함
+    lazy var favoriteAnimalStorage: FavoriteStorage = UserDefaultsFavoriteStorage()
+
+    // TODO: - static 걷어내기
+    static func makeFeedListViewModel(_ viewModel: FilterViewModel, service: SearchService = FamilyService()) -> FeedViewModel {
         return FeedViewModel(service: service, viewModel: viewModel)
     }
 
-    static func makeFilterReducer() -> FilterViewModel {
+    static func makeFilterViewModel() -> FilterViewModel {
         return FilterViewModel()
     }
 
-    static func makeProvinceReducer(service: SearchService = FamilyService()) -> ProvinceViewModel {
+    static func makeProvinceViewModel(service: SearchService = FamilyService()) -> ProvinceViewModel {
         return ProvinceViewModel(service: service)
+    }
+
+    func makeFavoriteButtonViewModel(with animal: Animal) -> FavoriteButtonViewModel {
+        FavoriteButtonViewModel(
+            animal: animal,
+            repository: makeFavoriteRepository()
+        )
+    }
+
+    func makeFavoriteRepository() -> FavoriteAnimalRepository {
+        FavoriteAnimalRepositoryImpl(
+            storage: favoriteAnimalStorage
+        )
     }
 }

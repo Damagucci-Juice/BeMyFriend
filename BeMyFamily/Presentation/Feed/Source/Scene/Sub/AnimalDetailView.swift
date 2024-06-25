@@ -121,7 +121,7 @@ struct AnimalDetailView: View {
 extension AnimalDetailView: Sharable { }
 
 #Preview {
-    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
+    @StateObject var reducer = DIContainer.makeFeedListViewModel(DIContainer.makeFilterViewModel())
     let animals = ModelData().animals.items
 
     return NavigationView {

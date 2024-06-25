@@ -102,7 +102,7 @@ struct FeedView: View {
 }
 
 #Preview {
-    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
+    @StateObject var reducer = DIContainer.makeFeedListViewModel(DIContainer.makeFilterViewModel())
 
     return FeedView()
         .environmentObject(reducer)
