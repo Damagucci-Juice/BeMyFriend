@@ -9,7 +9,7 @@ import SwiftUI
 @Observable
 final class FeedViewModel: ObservableObject {
     private let service: SearchService
-    private let filterReducer: FilterViewModel // TODO: 스토어가 없기 때문에 들고 있는 것이고, 만약 있다면 이 프로퍼티는 없어져야함
+    private let filterViewModel: FilterViewModel
 
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
@@ -21,9 +21,9 @@ final class FeedViewModel: ObservableObject {
     private(set) var page = 1
     private var lastFetchTime: Date?
 
-    init(service: SearchService, filterReducer: FilterViewModel) {
+    init(service: SearchService, viewModel: FilterViewModel) {
         self.service = service
-        self.filterReducer = filterReducer
+        self.filterViewModel = viewModel
         // MARK: - Load Saved Animals from User Defaualts
         self.animalDict[FriendMenu.favorite] = loadSavedAnimals()
     }
@@ -84,7 +84,7 @@ final class FeedViewModel: ObservableObject {
                 /// 빈 값을 가지고 있다면 "더이상 정보 해당 견종의 정보가 없다"고 알림
                 if let index = selectedFilter.firstIndex(of: filter) {
                     let removedFilter = selectedFilter.remove(at: index)
-                    self.filterReducer.updateEmptyReulst(with: removedFilter)
+                    self.filterViewModel.updateEmptyReulst(with: removedFilter)
                 }
             } else {
                 animalContainer += syncWithFavorites(animals)
