@@ -10,6 +10,7 @@ import SwiftUI
 
 struct FeedItemView: View {
     @Environment(\.displayScale) var displayScale
+    @EnvironmentObject var diContainer: DIContainer
     @State private var loadedImage: Image?
     @State private var renderedImage: Image?
     let animal: Animal
@@ -67,7 +68,7 @@ struct FeedItemView: View {
             HStack {
                 Spacer()
 
-                FavoriteButtonView(animal: animal, favoriteToggled: favoriteToggled)
+                FavoriteButtonView(viewModel: diContainer.makeFavoriteButtonViewModel(with: animal))
 
                 ShareButton(renderedImage: $renderedImage, hasImage: hasImage)
             }
@@ -79,7 +80,7 @@ struct FeedItemView: View {
 extension FeedItemView: Sharable { }
 
 #Preview {
-    @StateObject var reducer = DIContainer.makeFeedListReducer(DIContainer.makeFilterReducer())
+    @StateObject var reducer = DIContainer.makeFeedListViewModel(DIContainer.makeFilterViewModel())
     let animals = ModelData().animals.items
 
     return ScrollView {

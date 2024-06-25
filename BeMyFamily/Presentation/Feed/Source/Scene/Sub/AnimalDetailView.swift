@@ -11,6 +11,7 @@ import SwiftUI
 
 struct AnimalDetailView: View {
     @Environment(\.displayScale) var displayScale
+    @EnvironmentObject var diContainer: DIContainer
     @State private var loadedImage: Image?
     @State private var renderedImage: Image?
     let animal: Animal
@@ -110,7 +111,7 @@ struct AnimalDetailView: View {
         HStack {
             Spacer()
 
-            FavoriteButtonView(animal: animal, favoriteToggled: favoriteToggled)
+            FavoriteButtonView(viewModel: diContainer.makeFavoriteButtonViewModel(with: animal))
 
             ShareButton(renderedImage: $renderedImage, hasImage: hasImage)
         }
