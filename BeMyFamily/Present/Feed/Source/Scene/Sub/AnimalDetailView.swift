@@ -110,7 +110,7 @@ struct AnimalDetailView: View {
         HStack {
             Spacer()
 
-            LikeButton(animal: animal, favoriteToggled: favoriteToggled)
+            FavoriteButtonView(animal: animal, favoriteToggled: favoriteToggled)
 
             ShareButton(renderedImage: $renderedImage, hasImage: hasImage)
         }

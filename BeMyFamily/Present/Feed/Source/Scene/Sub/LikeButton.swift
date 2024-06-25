@@ -1,5 +1,5 @@
 //
-//  LikeButton.swift
+//  FavoriteButtonView.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 4/30/24.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LikeButton: View {
+struct FavoriteButtonView: View {
     let animal: Animal
     var favoriteToggled: (Animal) -> Void
 
@@ -36,7 +36,7 @@ struct LikeButton: View {
 #Preview {
     let animal = ModelData().animals.items
 
-    return LikeButton(animal: animal[0]) { animal in
+    return FavoriteButtonView(animal: animal[0]) { animal in
         print(animal.specialMark)
     }
 }
