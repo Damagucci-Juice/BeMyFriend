@@ -9,10 +9,6 @@ import Foundation
 
 @Observable
 final class Animal: Codable, Equatable, Identifiable {
-    static func == (lhs: Animal, rhs: Animal) -> Bool {
-        lhs.id == rhs.id
-    }
-
     let id: String
     let thumbnailURL: String
     let happenDt, happenPlace, kindCD, colorCD: String
@@ -36,5 +32,15 @@ final class Animal: Codable, Equatable, Identifiable {
         case sexCD = "sexCd"
         case neuterYn, specialMark, careNm, careTel, careAddr, orgNm, chargeNm, officetel
         case id = "desertionNo"
+    }
+}
+
+extension Animal: Hashable {
+    static func == (lhs: Animal, rhs: Animal) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

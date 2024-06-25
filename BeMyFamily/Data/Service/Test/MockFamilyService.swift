@@ -1,5 +1,5 @@
 //
-//  TestFamilyService.swift
+//  MockFamilyService.swift
 //  BeMyFamily
 //
 //  Created by Gucci on 5/10/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class TestFamilyService: SearchService {
+final class MockFamilyService: SearchService {
     let isEmptyResultTest: Bool
     init(isEmptyResultTest: Bool = false) {
         self.isEmptyResultTest = isEmptyResultTest
@@ -20,15 +20,15 @@ final class TestFamilyService: SearchService {
 
         switch endpoint {
         case .sido:
-            fileName = Constants.TestFile.sido
+            fileName = NetworkConstants.TestFile.sido
         case .sigungu:
-            fileName = Constants.TestFile.sigungu
+            fileName = NetworkConstants.TestFile.sigungu
         case .kind:
-            fileName = Constants.TestFile.kind
+            fileName = NetworkConstants.TestFile.kind
         case .shelter:
-            fileName = isEmptyResultTest ? Constants.TestFile.emptyShelter : Constants.TestFile.shelter
+            fileName = isEmptyResultTest ? NetworkConstants.TestFile.emptyShelter : NetworkConstants.TestFile.shelter
         case .animal:
-            fileName = isEmptyResultTest ? Constants.TestFile.emptyAnimal : Constants.TestFile.animal
+            fileName = isEmptyResultTest ? NetworkConstants.TestFile.emptyAnimal : NetworkConstants.TestFile.animal
         }
 
         return loadData(fileName)
