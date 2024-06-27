@@ -10,6 +10,6 @@ import Foundation
 protocol FavoriteAnimalRepository {
     func saveFavoriteAnimal(animal: Animal)
     func removeFavoriteAnimal(animal: Animal)
-    func fetchFavoriteAnimlaList() -> [Animal]
+    func loadFavoriteAnimlaList() -> [Animal]
     func contains(animal: Animal) -> Bool 
 }

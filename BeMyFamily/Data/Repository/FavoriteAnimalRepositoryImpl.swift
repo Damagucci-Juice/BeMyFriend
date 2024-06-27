@@ -22,7 +22,7 @@ class FavoriteAnimalRepositoryImpl: FavoriteAnimalRepository {
         storage.remove(animal: animal)
     }
     
-    func fetchFavoriteAnimlaList() -> [Animal] {
+    func loadFavoriteAnimlaList() -> [Animal] {
         storage.list()
     }
 
