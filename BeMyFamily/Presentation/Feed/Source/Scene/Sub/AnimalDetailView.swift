@@ -15,7 +15,6 @@ struct AnimalDetailView: View {
     @State private var loadedImage: Image?
     @State private var renderedImage: Image?
     let animal: Animal
-    var favoriteToggled: (Animal) -> Void
     private var hasImage: Bool { loadedImage != nil ? false : true }
 
     var body: some View {
@@ -44,7 +43,7 @@ struct AnimalDetailView: View {
             if let image = state.image {
                 image
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
+                    .aspectRatio(contentMode: .fit)
                     .frame(width: UIConstants.Frame.screenWidth,
                            height: UIConstants.Frame.feedImageHeight)
                     .clipShape(Rectangle())
@@ -126,6 +125,6 @@ extension AnimalDetailView: Sharable { }
     let animals = ModelData().animals.items
 
     return NavigationView {
-        AnimalDetailView(animal: animals[0], favoriteToggled: reducer.updateFavorite)
+        AnimalDetailView(animal: animals[0])
     }
 }
