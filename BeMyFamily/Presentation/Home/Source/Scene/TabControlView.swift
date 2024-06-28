@@ -10,13 +10,24 @@ import SwiftUI
 struct TabControlView: View {
     @EnvironmentObject var reducer: FeedViewModel
     @EnvironmentObject var filterReducer: FilterViewModel
+    @EnvironmentObject var diContainer: DIContainer
 
     var body: some View {
         TabView(selection: $reducer.menu) {
             ForEach(FriendMenu.allCases, id: \.self) { menu in
-                // MARK: - FilterView, FavoriteView는 FeedView 안에 중첩 구현
-                if menu != .filter {
-                    FeedView()
+                switch menu {
+                // MARK: - FeedView == Normal + Filter
+                case .feed, .filter:
+                    if menu == .feed {
+                        FeedView()
+                            .tabItem { Label(menu.title, systemImage: menu.image) }
+                            .tag(
+                                currentMenu(menu)
+                            )
+                    }
+                // MARK: - FavoriteView
+                case .favorite:
+                    FavoriteTabView(viewModel: diContainer.makeFavoriteTabViewModel())
                         .tabItem { Label(menu.title, systemImage: menu.image) }
                         .tag(
                             currentMenu(menu)
@@ -43,8 +54,10 @@ extension TabControlView {
 
 #Preview {
     @StateObject var reducer = DIContainer.makeFeedListViewModel(DIContainer.makeFilterViewModel())
+    @StateObject var diContainer = DIContainer(dependencies: .init(apiService: FamilyService()))
 
     return TabControlView()
         .environmentObject(reducer)
+        .environmentObject(diContainer)
         .preferredColorScheme(.dark)
 }

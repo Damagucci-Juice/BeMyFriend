@@ -14,7 +14,6 @@ struct FeedItemView: View {
     @State private var loadedImage: Image?
     @State private var renderedImage: Image?
     let animal: Animal
-    var favoriteToggled: (Animal) -> Void
     private var hasImage: Bool { loadedImage != nil ? false : true }
 
     var body: some View {
@@ -85,8 +84,8 @@ extension FeedItemView: Sharable { }
 
     return ScrollView {
         VStack(spacing: UIConstants.Spacing.interFeedItem) {
-            FeedItemView(animal: animals[0], favoriteToggled: reducer.updateFavorite)
-            FeedItemView(animal: animals[1], favoriteToggled: reducer.updateFavorite)
+            FeedItemView(animal: animals[0])
+            FeedItemView(animal: animals[1])
         }
         .environmentObject(reducer)
     }

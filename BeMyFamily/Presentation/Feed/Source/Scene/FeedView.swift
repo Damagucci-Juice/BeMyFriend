@@ -7,6 +7,7 @@
 import NukeUI
 import SwiftUI
 
+// MARK: - 일반 Feed와 Filter Tab을 보여줌
 struct FeedView: View {
     @EnvironmentObject var reducer: FeedViewModel
     @EnvironmentObject var filterReducer: FilterViewModel
@@ -36,9 +37,9 @@ struct FeedView: View {
             ForEach(reducer.animalDict[
                 reducer.menu, default: []]) { animal in
                 NavigationLink {
-                    AnimalDetailView(animal: animal, favoriteToggled: reducer.updateFavorite)
+                    AnimalDetailView(animal: animal)
                 } label: {
-                    FeedItemView(animal: animal, favoriteToggled: reducer.updateFavorite)
+                    FeedItemView(animal: animal)
                 }
                 .tint(.primary)
             }

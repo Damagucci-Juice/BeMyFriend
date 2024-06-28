@@ -35,6 +35,16 @@ class DIContainer: ObservableObject {
         return ProvinceViewModel(service: service)
     }
 
+    // MARK: - Favorites
+
+    func makeFavoriteTabViewModel() -> FavoriteTabViewModel {
+        FavoriteTabViewModel(loadFavoriteListUseCase: makeLoadFavoriteUseCase())
+    }
+
+    func makeLoadFavoriteUseCase() -> LoadFavoriteListUseCase {
+        LoadFavoriteListUseCase(favoriteRepository: makeFavoriteRepository())
+    }
+
     func makeFavoriteButtonViewModel(with animal: Animal) -> FavoriteButtonViewModel {
         FavoriteButtonViewModel(
             animal: animal,

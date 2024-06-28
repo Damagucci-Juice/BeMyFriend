@@ -17,11 +17,11 @@ class FavoriteAnimalRepositoryImpl: FavoriteAnimalRepository {
     func saveFavoriteAnimal(animal: Animal) {
         storage.add(animal: animal)
     }
-    
+
     func removeFavoriteAnimal(animal: Animal) {
         storage.remove(animal: animal)
     }
-    
+
     func loadFavoriteAnimlaList() -> [Animal] {
         storage.list()
     }
