@@ -11,6 +11,7 @@ final class FeedViewModel: ObservableObject {
     private let service: SearchService
     private let filterViewModel: FilterViewModel
 
+    // TODO: - Tab 전환을 담당하는 로직을 여기서 들고 있으면 안될 것 같다. 
     var menu = FriendMenu.feed
     private(set) var selectedFilter: [AnimalFilter] = [.example]
     private(set) var filterPage = 1
