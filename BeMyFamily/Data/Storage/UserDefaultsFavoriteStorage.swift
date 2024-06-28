@@ -61,6 +61,6 @@ class UserDefaultsFavoriteStorage: FavoriteStorage {
 
     func list() -> [Animal] {
         let favorites = set()
-        return Array(favorites)
+        return Array(favorites).sorted(by: { $0.happenDt > $1.happenDt })
     }
 }
