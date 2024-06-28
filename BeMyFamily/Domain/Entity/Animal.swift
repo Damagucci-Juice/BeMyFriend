@@ -14,7 +14,7 @@ final class Animal: Codable, Equatable, Identifiable {
     let happenDt, happenPlace, kindCD, colorCD: String
     let age, weight, noticeNo, noticeSdt: String
     let noticeEdt: String
-    let animalPhotoURL: String
+    let photoURL: String
     let processState: String
     let sexCD: SexCD
     let neuterYn: Neutralization
@@ -24,7 +24,7 @@ final class Animal: Codable, Equatable, Identifiable {
 
     enum CodingKeys: String, CodingKey {
         case thumbnailURL = "filename"
-        case animalPhotoURL = "popfile"
+        case photoURL = "popfile"
         case happenDt, happenPlace
         case kindCD = "kindCd"
         case colorCD = "colorCd"

@@ -14,7 +14,7 @@ struct AnimalThumbnailView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            LazyImage(url: URL(string: animal.thumbnailURL)) { state in
+            LazyImage(url: URL(string: animal.photoURL)) { state in
                 if let image = state.image {
                     image
                         .resizable()
