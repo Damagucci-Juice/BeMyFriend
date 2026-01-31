@@ -41,7 +41,7 @@ final class AnimalRepositoryImpl: AnimalRepository {
         if let result = animalEntities.first {
             return result
         } else {
-            throw NSError(domain: "Set An Aniaml Error", code: 404)
+            throw NSError(domain: "Set An Aniaml Error", code: 403)
         }
     }
 }
