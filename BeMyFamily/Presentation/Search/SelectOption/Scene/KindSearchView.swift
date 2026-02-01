@@ -23,11 +23,9 @@ struct KindSearchView: View {
         let baseKinds = upkind.flatMap { allKinds[$0] } ?? allKinds.values.flatMap { $0 }
 
         return baseKinds.filter { kind in
-            let isNotSelected = !selectedKinds.contains(kind)
-            let matchesSearch = !searchText.isEmpty
+            return !searchText.isEmpty
             ? (kind.name.contains(searchText) || kind.id.contains(searchText))
             : true
-            return isNotSelected && matchesSearch
         }
     }
 
@@ -77,7 +75,8 @@ private extension KindSearchView {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(filteredKinds) { kind in
-                    KindChipView(kind: kind, isSelected: false) {
+                    KindChipView(kind: kind,
+                                 isSelected: selectedKinds.contains(kind)) {
                         toggleSelection(kind)
                     }
                 }

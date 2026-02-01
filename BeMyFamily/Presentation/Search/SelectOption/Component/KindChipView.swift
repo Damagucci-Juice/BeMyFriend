@@ -28,6 +28,10 @@ struct KindChipView: View {
                     .lineLimit(1)
             }
         }
+        .overlay(
+            RoundedRectangle(cornerRadius: 8.0)
+                .stroke(isSelected ? Color.yellow : Color.clear, lineWidth: 1.0)
+        )
         .buttonStyle(.plain)
     }
 

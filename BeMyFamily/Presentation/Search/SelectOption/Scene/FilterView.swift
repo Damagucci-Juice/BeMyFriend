@@ -203,9 +203,9 @@ struct FilterView: View {
             ScrollView(.horizontal) {
                 HStack {
                     ForEach(Array(viewModel.kinds)) { kind in
-                        KindChipView(kind: kind, isSelected: true, action: {
+                        SelectedKindTag(kind: kind) {
                             viewModel.toggleKind(kind)
-                        })
+                        }
                     }
                 }
             }
