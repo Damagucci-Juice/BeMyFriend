@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct BeMyFamilyApp: App {
     @State private var deepLinkManager = DeepLinkManager()
-    
+
     var body: some Scene {
         WindowGroup {
             RootTabView()
@@ -21,7 +21,7 @@ struct BeMyFamilyApp: App {
                 }
         }
     }
-    
+
     private func handleUnivalsialLink(_ url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let queryItems = components.queryItems else { return }
